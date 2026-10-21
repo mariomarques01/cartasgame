@@ -25,6 +25,25 @@ var selected_actor := 0
 var selected_target := 3
 var ui: Dictionary = {}
 var history: Array[String] = []
+const GOLD := Color("#d5af69")
+const CREAM := Color("#f4e3bf")
+const INK := Color("#26312f")
+const GREEN := Color("#15392f")
+const RED := Color("#9e3e45")
+
+func _suit_name(suit: String) -> String:
+	match suit:
+		"♥": return "COPAS"
+		"♦": return "OUROS"
+		"♠": return "ESPADAS"
+		"♣": return "PAUS"
+	return "CORINGA"
+
+func _ornament(parent: Control) -> void:
+	var rule := HSeparator.new()
+	rule.add_theme_constant_override("separation", 4)
+	parent.add_child(rule)
+
 
 func _ready() -> void:
 	rng.randomize()
@@ -241,91 +260,158 @@ func _make_label(text: String, size: int = 18) -> Label:
 
 func _build_ui() -> void:
 	var background := ColorRect.new()
-	background.color = Color("#101d25")
+	background.color = Color("#101c23")
 	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(background)
 	var safe := MarginContainer.new()
 	safe.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	safe.add_theme_constant_override("margin_left",12)
-	safe.add_theme_constant_override("margin_right",12)
-	safe.add_theme_constant_override("margin_top",28)
-	safe.add_theme_constant_override("margin_bottom",20)
+	safe.add_theme_constant_override("margin_left", 10)
+	safe.add_theme_constant_override("margin_right", 10)
+	safe.add_theme_constant_override("margin_top", 22)
+	safe.add_theme_constant_override("margin_bottom", 16)
 	add_child(safe)
 	var layout := VBoxContainer.new()
-	layout.add_theme_constant_override("separation",8)
+	layout.add_theme_constant_override("separation", 6)
 	safe.add_child(layout)
-	var heading := _make_label("⚔ CARTAS — REINOS DO DESTINO",23)
+	var heading := _make_label("CARTAS  -  REINOS DO DESTINO", 21)
+	heading.add_theme_color_override("font_color", GOLD)
 	layout.add_child(heading)
-	ui["status"] = _make_label("",15)
+	ui["status"] = _make_label("", 14)
+	ui["status"].add_theme_color_override("font_color", CREAM)
 	layout.add_child(ui["status"])
 	var field := PanelContainer.new()
 	field.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color("#173b2d")
-	style.border_color = Color("#c59a51")
+	style.bg_color = GREEN
+	style.border_color = GOLD
 	style.set_border_width_all(5)
-	style.set_corner_radius_all(18)
-	field.add_theme_stylebox_override("panel",style)
+	style.set_corner_radius_all(16)
+	field.add_theme_stylebox_override("panel", style)
 	layout.add_child(field)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 6)
+	margin.add_theme_constant_override("margin_right", 6)
+	margin.add_theme_constant_override("margin_top", 6)
+	margin.add_theme_constant_override("margin_bottom", 6)
+	field.add_child(margin)
 	var rows := VBoxContainer.new()
-	rows.add_theme_constant_override("separation",7)
-	field.add_child(rows)
-	rows.add_child(_make_label("REINO ADVERSÁRIO",16))
+	rows.add_theme_constant_override("separation", 5)
+	margin.add_child(rows)
+	var enemy_label := _make_label("REINO ADVERSARIO", 15)
+	enemy_label.add_theme_color_override("font_color", GOLD)
+	rows.add_child(enemy_label)
 	ui["enemy"] = HBoxContainer.new()
 	ui["enemy"].alignment = BoxContainer.ALIGNMENT_CENTER
+	ui["enemy"].size_flags_vertical = Control.SIZE_EXPAND_FILL
+	ui["enemy"].add_theme_constant_override("separation", 5)
 	rows.add_child(ui["enemy"])
-	rows.add_child(_make_label("✦ BARALHO  ·  CAMPO DE BATALHA  ·  DESCARTE ✦",12))
-	ui["counts"] = _make_label("",13)
-	rows.add_child(ui["counts"])
-	rows.add_child(_make_label("SEUS HERÓIS",16))
+	_ornament(rows)
+	var center := HBoxContainer.new()
+	center.alignment = BoxContainer.ALIGNMENT_CENTER
+	center.add_theme_constant_override("separation", 14)
+	rows.add_child(center)
+	var deck_button := _make_pile("BARALHO")
+	center.add_child(deck_button)
+	var battlefield := VBoxContainer.new()
+	battlefield.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	center.add_child(battlefield)
+	var field_title := _make_label("CAMPO DE BATALHA", 12)
+	field_title.add_theme_color_override("font_color", GOLD)
+	battlefield.add_child(field_title)
+	ui["counts"] = _make_label("", 11)
+	battlefield.add_child(ui["counts"])
+	center.add_child(_make_pile("DESCARTE"))
+	_ornament(rows)
+	var player_label := _make_label("SEUS HEROIS", 15)
+	player_label.add_theme_color_override("font_color", GOLD)
+	rows.add_child(player_label)
 	ui["player"] = HBoxContainer.new()
 	ui["player"].alignment = BoxContainer.ALIGNMENT_CENTER
+	ui["player"].size_flags_vertical = Control.SIZE_EXPAND_FILL
+	ui["player"].add_theme_constant_override("separation", 5)
 	rows.add_child(ui["player"])
-	layout.add_child(_make_label("SUA MÃO",16))
+	var hand_label := _make_label("SUA MAO", 16)
+	hand_label.add_theme_color_override("font_color", GOLD)
+	layout.add_child(hand_label)
+	var scroll := ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2(0, 112)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	layout.add_child(scroll)
 	ui["hand"] = HBoxContainer.new()
-	ui["hand"].alignment = BoxContainer.ALIGNMENT_CENTER
-	layout.add_child(ui["hand"])
+	ui["hand"].add_theme_constant_override("separation", 6)
+	scroll.add_child(ui["hand"])
 	ui["actions"] = HBoxContainer.new()
 	ui["actions"].alignment = BoxContainer.ALIGNMENT_CENTER
+	ui["actions"].add_theme_constant_override("separation", 5)
 	layout.add_child(ui["actions"])
-	for label in ["Jogar carta","Atacar","Ás","Encerrar"]:
+	for label in ["Jogar", "Atacar", "As", "Encerrar"]:
 		var button := Button.new()
 		button.text = label
-		button.custom_minimum_size = Vector2(108,52)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.custom_minimum_size = Vector2(0, 44)
+		button.add_theme_font_size_override("font_size", 13)
+		var bs := StyleBoxFlat.new()
+		bs.bg_color = Color("#aa854a")
+		bs.border_color = Color("#f1d5a0")
+		bs.set_border_width_all(1)
+		bs.set_corner_radius_all(7)
+		button.add_theme_stylebox_override("normal", bs)
+		button.add_theme_color_override("font_color", Color("#1c2726"))
 		ui["actions"].add_child(button)
 		match label:
-			"Jogar carta": button.pressed.connect(_on_play)
+			"Jogar": button.pressed.connect(_on_play)
 			"Atacar": button.pressed.connect(_on_attack)
-			"Ás": button.pressed.connect(_on_ace)
+			"As": button.pressed.connect(_on_ace)
 			"Encerrar": button.pressed.connect(_end_turn)
 	var new_button := Button.new()
 	new_button.text = "Nova partida"
-	new_button.pressed.connect(new_game)
+	new_button.custom_minimum_size = Vector2(0, 32)
+	new_button.add_theme_font_size_override("font_size", 12)
 	layout.add_child(new_button)
-	ui["message"] = _make_label("",12)
+	new_button.pressed.connect(new_game)
+	ui["message"] = _make_label("", 11)
+	ui["message"].add_theme_color_override("font_color", GOLD)
 	layout.add_child(ui["message"])
+
+func _make_pile(title: String) -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.custom_minimum_size = Vector2(72, 74)
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color("#284c4b")
+	style.border_color = GOLD
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(5)
+	panel.add_theme_stylebox_override("panel", style)
+	var label := _make_label(title, 10)
+	label.add_theme_color_override("font_color", CREAM)
+	panel.add_child(label)
+	return panel
 
 func _make_card(text: String, is_red: bool, pressed: Callable, selected: bool = false) -> Button:
 	var button := Button.new()
 	button.text = text
-	button.custom_minimum_size = Vector2(146,188)
+	button.custom_minimum_size = Vector2(95, 118)
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.add_theme_font_size_override("font_size",15)
+	button.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	button.add_theme_font_size_override("font_size", 12)
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color("#f5e5c4")
-	style.border_color = Color("#76e0b4") if selected else Color("#b58d4b")
-	style.set_border_width_all(4 if selected else 2)
+	style.bg_color = CREAM
+	style.border_color = Color("#8fe4b8") if selected else GOLD
+	style.set_border_width_all(4 if selected else 3)
 	style.set_corner_radius_all(9)
-	button.add_theme_stylebox_override("normal",style)
-	button.add_theme_stylebox_override("hover",style)
-	button.add_theme_stylebox_override("pressed",style)
-	button.add_theme_color_override("font_color",Color("#a33a42") if is_red else Color("#1d2932"))
+	style.shadow_color = Color(0, 0, 0, 0.4)
+	style.shadow_size = 3
+	button.add_theme_stylebox_override("normal", style)
+	button.add_theme_stylebox_override("hover", style)
+	button.add_theme_stylebox_override("pressed", style)
+	button.add_theme_color_override("font_color", RED if is_red else INK)
 	button.pressed.connect(pressed)
 	return button
 
 func _refresh() -> void:
 	if ui.is_empty(): return
-	ui["status"].text = "Rodada %d   •   Você %d PG / %d ⚡   •   Rival %d PG / %d ⚡" % [round_number,glory[0],energy[0],glory[1],energy[1]]
+	ui["status"].text = "Rodada %d  |  Voce: %d PG / %d Energia  |  Rival: %d PG / %d Energia" % [round_number,glory[0],energy[0],glory[1],energy[1]]
 	ui["counts"].text = "Baralho: %d   •   Descarte: %d   •   Mão rival: %d" % [deck.size(),discard.size(),hands[1].size()]
 	for side in 2:
 		var container: HBoxContainer = ui["player"] if side == 0 else ui["enemy"]
@@ -334,14 +420,14 @@ func _refresh() -> void:
 			var h: Dictionary = heroes[i]
 			if h["side"] != side: continue
 			var card := _make_card("%s\n%s\n♥ %d/%d\n🛡 %d" % [h["suit"],h["name"],h["hp"],h["max_hp"],h["shield"]],h["suit"] in ["♥","♦"],func(): _select_hero(i),i == selected_actor or i == selected_target)
-			card.custom_minimum_size = Vector2(145,188)
+			card.custom_minimum_size = Vector2(0, 118)
 			container.add_child(card)
 	for child in ui["hand"].get_children(): child.queue_free()
 	for i in hands[0].size():
 		var c: Dictionary = hands[0][i]
-		var title: String = "🃏" if c.has("joker") else "%d %s" % [c["value"],c["suit"]]
+		var title: String = "CORINGA" if c.has("joker") else "%d\\n%s" % [c["value"],_suit_name(c["suit"])]
 		var card := _make_card("%s\n⚡ %d" % [title,_cost(c)],c.get("suit","") in ["♥","♦"],func(): _select_card(i),i == selected_index)
-		card.custom_minimum_size = Vector2(92,116)
+		card.custom_minimum_size = Vector2(90, 110)
 		ui["hand"].add_child(card)
 	for button in ui["actions"].get_children():
 		button.disabled = finished or current_side != 0
