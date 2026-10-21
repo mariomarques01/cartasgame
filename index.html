@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cartas — Reinos do Destino</title><style>
+:root{font-family:Georgia,serif;color:#f8ecd4;background:#101b24}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#304758,#101b24 75%)}main{max-width:1150px;margin:auto;padding:24px}h1{color:#efc879;margin:8px 0}h2{font-size:1.1rem;color:#e5c389}p{line-height:1.5}.panel{background:#192936;border:1px solid #79633d;border-radius:14px;padding:16px;margin:14px 0}.flex{display:flex;gap:12px;flex-wrap:wrap}.card{background:#f8ecd4;color:#23232a;border:3px solid #b89455;border-radius:12px;padding:12px;min-width:145px;max-width:210px;flex:1;box-shadow:0 4px 12px #0005}.card.red{color:#a62e3c}.card.dead{opacity:.4}.card.selected{outline:4px solid #69bda0}button,select{background:#d3a85b;border:0;border-radius:8px;padding:10px 12px;color:#1b2024;font-weight:bold;cursor:pointer}button:hover{filter:brightness(1.13)}button:disabled{opacity:.4;cursor:not-allowed}select{max-width:100%}.status{color:#b9d2da}.small{font-size:.85rem}.log{height:230px;overflow:auto;background:#0b1720;padding:12px;border-radius:8px;font-family:system-ui;font-size:.85rem}#hand .card{cursor:pointer}#hand .card:hover{transform:translateY(-3px)}.bar{height:7px;background:#563b3b;border-radius:6px;overflow:hidden;margin:8px 0}.bar span{display:block;height:100%;background:#60ad87}label{display:inline-block;margin:5px 10px 5px 0}header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.pill{background:#2c4652;padding:6px 12px;border-radius:18px}.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}footer{opacity:.7;margin:24px 0}.hint{color:#f3d99a}#notice{font-weight:bold;color:#f0c76c}@media(max-width:600px){main{padding:10px}.card{min-width:115px;padding:8px}h1{font-size:1.5rem}}</style></head>
+<body><main><header><div><h1>⚔ CARTAS — REINOS DO DESTINO</h1><span class="status">Protótipo digital • Regras de teste 1.1</span></div><button id="reset">Nova partida</button></header>
+<div class="panel"><div id="score"></div><div id="notice"></div></div>
+<section class="panel"><h2>Reino adversário</h2><div id="enemy" class="flex"></div><p id="enemyHand" class="status"></p></section>
+<section class="panel"><h2>Seu reino</h2><div id="player" class="flex"></div></section>
+<section class="panel"><h2>Sua mão — escolha uma carta</h2><div id="hand" class="flex"></div><p id="chosen" class="hint">Nenhuma carta selecionada.</p><div class="controls"><label>Herói <select id="actor"></select></label><label>Alvo <select id="target"></select></label><button id="play">Jogar carta</button><button id="attack">Atacar</button><button id="ace">Ativar Ás do herói</button><button id="end">Encerrar turno</button></div><p class="small status">Cada turno permite 1 carta, 1 Ás e 1 ataque. Para cartas de Copas/Ouros, escolha o herói que as utiliza e o alvo aliado; para ataques, escolha um inimigo.</p></section>
+<section class="panel"><h2>Registro auditável</h2><div id="log" class="log" aria-live="polite"></div></section><footer>Sem serviços externos, sem duplicação de cartas. As ilustrações finais poderão substituir os cartões provisórios.</footer></main>
+<script>
+"use strict";
+const SUITS=["♥","♦","♠","♣"],NAMES={"♥":"Copas","♦":"Ouros","♠":"Espadas","♣":"Paus"};
+const roster=[
+{name:"Rei de Espadas",s:"♠",rank:"K",hp:14,atk:4,def:3},
+{name:"Rainha de Copas",s:"♥",rank:"Q",hp:11,atk:2,def:2},
+{name:"Valete de Paus",s:"♣",rank:"J",hp:9,atk:3,def:1},
+{name:"Rei de Ouros",s:"♦",rank:"K",hp:14,atk:4,def:3},
+{name:"Rainha de Paus",s:"♣",rank:"Q",hp:11,atk:2,def:2},
+{name:"Valete de Copas",s:"♥",rank:"J",hp:9,atk:3,def:1}
+];
+const $=id=>document.getElementById(id);
+let g;
+const power=n=>n<=4?1:n<=7?2:3,cost=n=>n<=4?1:n<=7?2:3;
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function log(t){g.history.push(t);$("log").innerHTML=g.history.slice(-80).map(x=>"<div>"+x+"</div>").join("");$("log").scrollTop=$("log").scrollHeight}
+function alive(side){return g.heroes.filter(h=>h.side===side&&h.hp>0)}
+function hero(id){return g.heroes.find(h=>h.id===id)}
+function start(){let deck=[];for(const s of SUITS)for(let n=2;n<=10;n++)deck.push({id:s+n,s,n});deck.push({id:"JOKER-RED",joker:"red"},{id:"JOKER-BLUE",joker:"blue"});shuffle(deck);
+g={deck,discard:[],reshuffles:0,heroes:roster.map((h,i)=>({...h,id:i,side:i<3?0:1,max:h.hp,shield:0})),hands:[[],[]],energy:[3,3],glory:[0,0],turn:0,round:1,usedCard:false,usedAce:false,usedAttack:false,selected:null,history:[],over:false,aceUsed:[new Set(),new Set()]};
+for(let i=0;i<3;i++){draw(0);draw(1)}log("Partida iniciada. Baralho único com 38 cartas.");beginTurn();render()}
+function draw(side){if(!g.deck.length){if(g.reshuffles===0&&g.discard.length){g.deck=shuffle(g.discard.splice(0));g.reshuffles++;log("Descarte reembaralhado uma única vez.")}else{return false}}g.hands[side].push(g.deck.pop());return true}
+function beginTurn(){if(g.over)return;g.usedCard=false;g.usedAce=false;g.usedAttack=false;g.selected=null;g.aceUsed[g.turn]=new Set();for(const h of alive(g.turn))h.shield=0;g.energy[g.turn]=Math.min(6,g.energy[g.turn]+2);if(!(g.turn===0&&g.round===1))draw(g.turn);log((g.turn?"Adversário":"Você")+" começa o turno "+g.round+" com "+g.energy[g.turn]+" energia.");render()}
+function cardText(c){return c.joker?(c.joker==="red"?"🃏 Coringa Vermelho":"🃏 Coringa Azul"):c.n+" "+c.s}
+function spend(side,amount){if(g.energy[side]<amount)return false;g.energy[side]-=amount;return true}
+function shield(h,n){h.shield=Math.min(4,h.shield+n)}
+function heal(h,n){let v=h.hp;h.hp=Math.min(h.max,h.hp+n);return h.hp-v}
+function damage(attacker,target,bonus=0,ignore=0){let d=Math.max(1,attacker.atk+bonus-Math.max(0,target.def-ignore));if(attacker.rank==="K"&&attacker.s==="♣"&&target.hp===target.max)d++;
+if(attacker.rank==="J"&&attacker.s==="♠"&&target.hp<target.max)d++;
+if(attacker.rank==="J"&&attacker.s==="♣"&&attacker.hp<=4)d+=2;
+let guard=alive(attacker.side===0?1:0).find(x=>x.rank==="K"&&x.s==="♥");
+if(guard&&!guard.guardUsed){d=Math.max(0,d-1);guard.guardUsed=true}
+let absorbed=Math.min(d,target.shield);target.shield-=absorbed;d-=absorbed;let actual=Math.min(d,target.hp);target.hp-=actual;
+let pg=actual>=3?1:0;if(target.hp===0)pg+=target.rank==="K"?3:2;g.glory[attacker.side]+=pg;
+log(attacker.name+" ataca "+target.name+": "+actual+" PV, "+absorbed+" escudo, +"+pg+" PG.");
+checkWin();return actual}
+function checkWin(){if(g.glory[0]>=12||g.glory[1]>=12||!alive(0).length||!alive(1).length){g.over=true;let winner=g.glory[0]>=12||!alive(1).length?0:1;log("FIM: "+(winner===0?"Vitória do seu reino!":"Vitória do adversário."))}}
+function applyCard(side,c,a,t){if(g.usedCard)return false;let cst=c.joker?3:cost(c.n);if(g.energy[side]<cst)return false;
+if(!c.joker&&c.s==="♠"||!c.joker&&c.s==="♣"){if(!t||t.side===side||g.usedAttack)return false}
+if(!c.joker&&(c.s==="♥"||c.s==="♦")&&(!t||t.side!==side))return false;
+spend(side,cst);let bonus=0;
+if(c.joker==="red"){let s=t&&t.side!==side?"♠":"♥";if(s==="♠"&&!g.usedAttack){damage(a,t,3,1);g.usedAttack=true}else{heal(a,4);log(a.name+" recebe 4 PV do Coringa Vermelho.")}}
+else if(c.joker==="blue"){let options=alive(side===0?1:0);if(options.length&&!g.usedAttack){damage(a,options[0],2,1);g.usedAttack=true;log("Coringa Azul: transformação em golpe tático.")}else{shield(a,3);log("Coringa Azul: transformação em proteção (+3 escudos).")}}
+else {let p=power(c.n)+(a.s===c.s?1:0);if(c.s==="♥"){let n=heal(t,1+p);log(a.name+" usa "+cardText(c)+" e cura "+t.name+" em "+n+" PV.")}
+if(c.s==="♦"){g.energy[side]=Math.min(6,g.energy[side]+p);shield(t,1+p+(a.rank==="Q"&&a.s==="♦"?1:0));log(a.name+" usa "+cardText(c)+" e concede recursos e escudos a "+t.name+".")}
+if(c.s==="♠"||c.s==="♣"){if(c.s==="♣")shield(a,1);damage(a,t,p,c.s==="♠"?1:0);g.usedAttack=true;}}
+g.hands[side]=g.hands[side].filter(x=>x.id!==c.id);g.discard.push(c);g.usedCard=true;g.selected=null;checkWin();render();return true}
+function useAce(side,a,t){if(g.usedAce||!a||a.hp<=0||!spend(side,2))return false;g.usedAce=true;
+if(a.s==="♥"){if(!t||t.side!==side)t=a;heal(t,3);shield(t,1);log("Ás de Copas: cura e escudo para "+t.name)}
+if(a.s==="♦"){g.energy[side]=Math.min(6,g.energy[side]+3);log("Ás de Ouros: +3 energia.")}
+if(a.s==="♠"){draw(side);draw(side);if(g.hands[side].length){let discarded=g.hands[side].pop();g.discard.push(discarded);log("Ás de Espadas: compra 2 e descarta "+cardText(discarded))}}
+if(a.s==="♣"){a.aceBonus=2;log("Ás de Paus: +2 ATQ no próximo ataque deste turno.")}
+render();return true}
+function basic(side,a,t){if(g.usedAttack||!a||!t||a.side!==side||t.side===side||a.hp<=0||t.hp<=0)return false;damage(a,t,a.aceBonus||0);a.aceBonus=0;g.usedAttack=true;render();return true}
+function endTurn(){if(g.over)return;for(const h of g.heroes)h.guardUsed=false;for(const h of alive(g.turn))h.aceBonus=0;
+while(g.hands[g.turn].length>5){let c=g.hands[g.turn].pop();g.discard.push(c);log("Limite de mão: "+cardText(c)+" descartada.")}
+if(g.turn===1&&g.round===5){for(let side=0;side<2;side++)if(alive(side).length===3){g.glory[side]+=2;log((side?"Adversário":"Você")+" recebe +2 PG de sobrevivência.")}checkWin()}
+if(g.over){render();return}if(g.turn===1)g.round++;g.turn=1-g.turn;beginTurn();if(g.turn===1)enemyTurn()}
+function enemyTurn(){if(g.over)return;let us=alive(1),them=alive(0);if(!us.length||!them.length)return;
+let attacker=us.find(x=>x.rank==="K")||us[0],target=them.slice().sort((a,b)=>a.hp-b.hp)[0];
+let cards=g.hands[1];let offensive=cards.find(c=>!c.joker&&(c.s==="♠"||c.s==="♣")&&cost(c.n)<=g.energy[1]);let support=cards.find(c=>!c.joker&&c.s==="♦"&&cost(c.n)<=g.energy[1]);
+if(offensive)applyCard(1,offensive,attacker,target);else if(support)applyCard(1,support,attacker,attacker);
+if(!g.usedAttack&&!g.over)basic(1,attacker,target);
+if(!g.over)endTurn();else render()}
+function render(){if(!g)return;$("score").innerHTML="<strong>Rodada "+g.round+"</strong> · Você "+g.glory[0]+" PG / "+g.energy[0]+" ⚡ · Adversário "+g.glory[1]+" PG / "+g.energy[1]+" ⚡ · Baralho "+g.deck.length+" · Descarte "+g.discard.length;
+$("notice").textContent=g.over?"PARTIDA ENCERRADA":g.turn===0?"Seu turno":"Turno adversário";
+for(const side of [0,1]){$(side?"enemy":"player").innerHTML=g.heroes.filter(h=>h.side===side).map(h=>'<div class="card '+(h.hp<=0?"dead":"")+'"><b>'+h.name+" "+h.s+'</b><p>♥ '+h.hp+'/'+h.max+' · 🛡 '+h.shield+'</p><div class="bar"><span style="width:'+(100*h.hp/h.max)+'%"></span></div><span class="small">ATQ '+h.atk+' · DEF '+h.def+'</span></div>').join("")}
+$("enemyHand").textContent="Cartas na mão adversária: "+g.hands[1].length+" (ocultas até o fim da partida)";
+$("hand").innerHTML=g.hands[0].map((c,i)=>'<div class="card '+(c.s==="♥"||c.s==="♦"?"red ":"")+(g.selected===c.id?"selected":"")+'" data-index="'+i+'" role="button" tabindex="0"><h2>'+cardText(c)+'</h2><p>'+(c.joker?"Habilidade especial":"Potência "+power(c.n))+'</p><span class="small">Custo '+(c.joker?3:cost(c.n))+' ⚡</span></div>').join("");
+document.querySelectorAll("#hand .card").forEach(el=>el.onclick=()=>{g.selected=g.hands[0][Number(el.dataset.index)].id;render()});
+const actors=alive(0),targets=[...alive(1),...alive(0)];let a=$("actor").value,t=$("target").value;
+$("actor").innerHTML=actors.map(h=>'<option value="'+h.id+'">'+h.name+'</option>').join("");
+$("target").innerHTML=targets.map(h=>'<option value="'+h.id+'">'+h.name+(h.side===0?" (aliado)":" (inimigo)")+'</option>').join("");
+if(actors.some(h=>String(h.id)===a))$("actor").value=a;if(targets.some(h=>String(h.id)===t))$("target").value=t;
+$("chosen").textContent=g.selected?"Selecionada: "+cardText(g.hands[0].find(c=>c.id===g.selected)):"Nenhuma carta selecionada.";
+const active=g.turn===0&&!g.over;$("play").disabled=!active||g.usedCard||!g.selected;$("attack").disabled=!active||g.usedAttack;$("ace").disabled=!active||g.usedAce;$("end").disabled=!active}
+$("play").onclick=()=>{let c=g.hands[0].find(c=>c.id===g.selected);if(!c||!applyCard(0,c,hero(Number($("actor").value)),hero(Number($("target").value))))alert("Jogada inválida: verifique Energia, alvo e limite de ações.")};
+$("attack").onclick=()=>{if(!basic(0,hero(Number($("actor").value)),hero(Number($("target").value))))alert("Selecione um atacante aliado e um alvo inimigo.")};
+$("ace").onclick=()=>{if(!useAce(0,hero(Number($("actor").value)),hero(Number($("target").value))))alert("Ás indisponível: verifique Energia e limite de uso.")};
+$("end").onclick=endTurn;$("reset").onclick=()=>{if(confirm("Iniciar uma nova partida?"))start()};start();
+</script></body></html>
