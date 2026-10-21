@@ -30,8 +30,14 @@ const CREAM := Color("#f4e3bf")
 const INK := Color("#26312f")
 const GREEN := Color("#15392f")
 const RED := Color("#9e3e45")
-const OFFICIAL_JOKER := "res://assets/cards/coringa_oficial.jpg"
-var joker_texture: Texture2D
+const ART_PATHS := {
+	"8♣": "res://assets/cards/8_paus.png",
+	"9♣": "res://assets/cards/9_paus.png",
+	"10♣": "res://assets/cards/10_paus.png",
+	"joker-red": "res://assets/cards/coringa_vermelho.png",
+	"joker-blue": "res://assets/cards/coringa_azul.png"
+}
+var card_art: Dictionary = {}
 
 func _suit_name(suit: String) -> String:
 	match suit:
@@ -49,8 +55,10 @@ func _ornament(parent: Control) -> void:
 
 func _ready() -> void:
 	rng.randomize()
-	if ResourceLoader.exists(OFFICIAL_JOKER):
-		joker_texture = load(OFFICIAL_JOKER)
+	for key in ART_PATHS:
+		var asset_path: String = ART_PATHS[key]
+		if ResourceLoader.exists(asset_path):
+			card_art[key] = load(asset_path)
 	_build_ui()
 	new_game()
 
@@ -433,10 +441,10 @@ func _refresh() -> void:
 		var card := _make_card("%s\nCUSTO %d" % [title,_cost(c)],c.get("suit","") in ["♥","♦"],func(): _select_card(i),i == selected_index)
 		card.custom_minimum_size = Vector2(90, 110)
 		ui["hand"].add_child(card)
-		if c.has("joker") and joker_texture != null:
+		if card_art.has(c["id"]):
 			card.text = ""
 			var art := TextureRect.new()
-			art.texture = joker_texture
+			art.texture = card_art[c["id"]]
 			art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			art.mouse_filter = Control.MOUSE_FILTER_IGNORE
