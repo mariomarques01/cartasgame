@@ -18,11 +18,23 @@ concurrency:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/abarichello/godot-ci:4.3
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Instalar Godot 4.3 e templates Web
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y unzip
+          curl -fL --retry 3 -o /tmp/godot.zip "https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip"
+          unzip -q /tmp/godot.zip -d /tmp
+          sudo install -m 755 /tmp/Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+          mkdir -p "$HOME/.local/share/godot/export_templates/4.3.stable"
+          curl -fL --retry 3 -o /tmp/templates.tpz "https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz"
+          unzip -q /tmp/templates.tpz -d /tmp/godot-templates
+          cp -a /tmp/godot-templates/templates/. "$HOME/.local/share/godot/export_templates/4.3.stable/"
+          godot --version
 
       - name: Importar recursos e validar projeto
         run: |
@@ -33,7 +45,7 @@ jobs:
       - name: Exportar versão Web
         run: |
           mkdir -p godot/build/web
-          godot --headless --path godot --export-release "Web" build/web/index.html
+          godot --headless --path godot --export-release "Web" "$GITHUB_WORKSPACE/godot/build/web/index.html"
           test -s godot/build/web/index.html
           test -s godot/build/web/index.wasm
           test -s godot/build/web/index.pck
