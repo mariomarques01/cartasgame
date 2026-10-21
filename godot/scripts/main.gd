@@ -419,14 +419,14 @@ func _refresh() -> void:
 		for i in heroes.size():
 			var h: Dictionary = heroes[i]
 			if h["side"] != side: continue
-			var card := _make_card("%s\n%s\n♥ %d/%d\n🛡 %d" % [h["suit"],h["name"],h["hp"],h["max_hp"],h["shield"]],h["suit"] in ["♥","♦"],func(): _select_hero(i),i == selected_actor or i == selected_target)
+			var card := _make_card("%s\n%s\nVIDA %d/%d\nDEF %d  ESC %d" % [_suit_name(h["suit"]),h["name"],h["hp"],h["max_hp"],h["def"],h["shield"]],h["suit"] in ["♥","♦"],func(): _select_hero(i),i == selected_actor or i == selected_target)
 			card.custom_minimum_size = Vector2(0, 118)
 			container.add_child(card)
 	for child in ui["hand"].get_children(): child.queue_free()
 	for i in hands[0].size():
 		var c: Dictionary = hands[0][i]
-		var title: String = "CORINGA" if c.has("joker") else "%d\\n%s" % [c["value"],_suit_name(c["suit"])]
-		var card := _make_card("%s\n⚡ %d" % [title,_cost(c)],c.get("suit","") in ["♥","♦"],func(): _select_card(i),i == selected_index)
+		var title: String = "CORINGA" if c.has("joker") else "%d\n%s" % [c["value"],_suit_name(c["suit"])]
+		var card := _make_card("%s\nCUSTO %d" % [title,_cost(c)],c.get("suit","") in ["♥","♦"],func(): _select_card(i),i == selected_index)
 		card.custom_minimum_size = Vector2(90, 110)
 		ui["hand"].add_child(card)
 	for button in ui["actions"].get_children():
