@@ -1,0 +1,45 @@
+name: Aplicar atualização Godot enviada em ZIP
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'godot-atualizacao.zip'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Validar e substituir arquivos
+        run: |
+          python3 - <<'PY'
+          import zipfile, pathlib, sys
+          p = pathlib.Path('godot-atualizacao.zip')
+          if not p.exists():
+              sys.exit('Envie godot-atualizacao.zip na raiz do repositório.')
+          allowed = {'godot/scripts/main.gd','godot/tests/smoke.gd','godot/README.md'}
+          with zipfile.ZipFile(p) as z:
+              if set(z.namelist()) != allowed:
+                  sys.exit('Conteúdo inesperado no ZIP; operação cancelada.')
+              for name in sorted(allowed):
+                  target = pathlib.Path(name)
+                  target.parent.mkdir(parents=True,exist_ok=True)
+                  target.write_bytes(z.read(name))
+                  print('Substituído:',name)
+          PY
+      - name: Publicar alterações
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add godot/scripts/main.gd godot/tests/smoke.gd godot/README.md
+          if ! git diff --cached --quiet; then
+            git commit -m "feat: aplicar atualização Godot enviada pelo usuário"
+            git push origin HEAD:main
+          fi
