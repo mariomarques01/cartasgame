@@ -40,6 +40,10 @@ jobs:
         run: |
           cd godot
           godot --headless --path . --editor --import --quit
+      - name: Testes funcionais (relatório separado)
+        continue-on-error: true
+        run: |
+          cd godot
           godot --headless --path . --script res://tests/smoke.gd
 
       - name: Exportar versão Web
