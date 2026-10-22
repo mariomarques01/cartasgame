@@ -460,14 +460,14 @@ func _refresh() -> void:
 		var card := _make_card("%s\nCUSTO %d" % [title,_cost(c)],c.get("suit","") in ["♥","♦"],func(): _select_card(i),i == selected_index)
 		card.custom_minimum_size = Vector2(90, 110)
 		ui["hand"].add_child(card)
-		var art_key: String = "joker-red" if c.has("joker") else c["suit"] + str(c["value"])
+		var art_key: String = ("joker-red" if c["joker"] == "red" else "joker-blue") if c.has("joker") else c["suit"] + str(c["value"])
 		if card_art.has(art_key):
 			_attach_art(card, card_art[art_key], false)
 	for button in ui["actions"].get_children():
 		button.disabled = finished or current_side != 0
 	ui["message"].text = history.back() if not history.is_empty() else ""
 
-func _attach_art(card: Button, texture: Texture2D, hero: bool) -> void:
+func _attach_art(card: Button, texture: Texture2D, _hero: bool) -> void:
 	card.text = ""
 	var art := TextureRect.new()
 	art.texture = texture
@@ -480,7 +480,7 @@ func _attach_art(card: Button, texture: Texture2D, hero: bool) -> void:
 	art.offset_right = -2
 	art.offset_bottom = -2
 	card.add_child(art)
-\nfunc _select_hero(index: int) -> void:
+func _select_hero(index: int) -> void:
 	if finished or current_side != 0 or heroes[index]["hp"] <= 0: return
 	if heroes[index]["side"] == 0:
 		selected_actor = index
