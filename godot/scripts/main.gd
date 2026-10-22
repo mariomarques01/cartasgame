@@ -727,7 +727,7 @@ func _build_ui() -> void:
 	field.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	field.custom_minimum_size = Vector2(0, 460)
 	field.add_theme_stylebox_override("panel", _style(Color("#0a1721"), Color("#c9a062"), 5, 16))
-	field.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW
+	field.clip_contents = true
 	layout.add_child(field)
 	var felt := Gradient.new()
 	felt.colors = PackedColorArray([Color("#294052"), Color("#07111c")])
@@ -743,10 +743,12 @@ func _build_ui() -> void:
 	felt_rect.stretch_mode = TextureRect.STRETCH_SCALE
 	felt_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	field.add_child(felt_rect)
+	felt_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var margin := MarginContainer.new()
 	for side in ["left","right","top","bottom"]:
 		margin.add_theme_constant_override("margin_" + side, 6)
 	field.add_child(margin)
+	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var rows := VBoxContainer.new()
 	rows.add_theme_constant_override("separation", 4)
 	margin.add_child(rows)
@@ -876,23 +878,23 @@ func _attach_art(card: Button, texture: Texture2D) -> void:
 	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(art)
 	art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	art.offset_left = 2
 	art.offset_top = 2
 	art.offset_right = -2
 	art.offset_bottom = -2
-	card.add_child(art)
 
 func _badge(card: Control, lines: Array, bar_value: float = -1.0, height: float = 40.0) -> void:
 	var panel := PanelContainer.new()
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(panel)
 	panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	panel.offset_top = -height
 	panel.offset_left = 4
 	panel.offset_right = -4
 	panel.offset_bottom = -4
 	panel.add_theme_stylebox_override("panel", _style(Color(0.03, 0.08, 0.1, 0.94), Color(0, 0, 0, 0), 0, 4))
-	card.add_child(panel)
 	var box := VBoxContainer.new()
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_theme_constant_override("separation", 0)
