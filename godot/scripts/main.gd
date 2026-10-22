@@ -5,6 +5,8 @@ extends Control
 
 signal suit_chosen(suit: String)
 
+const Ornament = preload("res://scripts/ornament.gd")
+
 const SUITS := ["♥", "♦", "♠", "♣"]
 const MAX_ENERGY := 6
 const MAX_SHIELD := 4
@@ -668,6 +670,21 @@ func _style(bg: Color, border: Color, border_width: int, radius: int) -> StyleBo
 	s.shadow_size = 3
 	return s
 
+func _add_ornament(parent: Control, corners: float = 22.0, edges: bool = true) -> void:
+	var overlay := Ornament.new()
+	overlay.corner_size = corners
+	overlay.ornate_edges = edges
+	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(overlay)
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+
+func _ribbon(label: Label, background: Color) -> void:
+	var ribbon_style := _style(background, Color("#b78a4c"), 1, 4)
+	ribbon_style.set_content_margin_all(3)
+	label.add_theme_stylebox_override("normal", ribbon_style)
+	label.add_theme_color_override("font_shadow_color", Color("#30170c"))
+	label.add_theme_constant_override("shadow_offset_y", 1)
+
 func _side_status() -> Dictionary:
 	var box := VBoxContainer.new()
 	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -716,6 +733,7 @@ func _build_ui() -> void:
 	heading.add_theme_color_override("font_shadow_color", Color("#ae7034"))
 	heading.add_theme_constant_override("shadow_offset_y", 2)
 	layout.add_child(heading)
+	_ribbon(heading, Color("#0c1b29"))
 	var top := HBoxContainer.new()
 	top.add_theme_constant_override("separation", 8)
 	layout.add_child(top)
@@ -724,6 +742,7 @@ func _build_ui() -> void:
 	ui["round"] = _make_label("", 13)
 	ui["round"].custom_minimum_size = Vector2(70, 0)
 	ui["round"].add_theme_color_override("font_color", GOLD)
+	_ribbon(ui["round"], Color("#3d2515"))
 	top.add_child(ui["me"]["root"])
 	top.add_child(ui["round"])
 	top.add_child(ui["foe"]["root"])
@@ -757,11 +776,13 @@ func _build_ui() -> void:
 		margin.add_theme_constant_override("margin_" + side, 6)
 	field.add_child(margin)
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_add_ornament(field, 25.0)
 	var rows := VBoxContainer.new()
 	rows.add_theme_constant_override("separation", 2)
 	margin.add_child(rows)
 	var enemy_label := _make_label("REINO ADVERSÁRIO", 13)
 	enemy_label.add_theme_color_override("font_color", GOLD)
+	_ribbon(enemy_label, Color("#6d1420"))
 	rows.add_child(enemy_label)
 	ui["enemy"] = HBoxContainer.new()
 	ui["enemy"].alignment = BoxContainer.ALIGNMENT_CENTER
@@ -775,6 +796,7 @@ func _build_ui() -> void:
 	rows.add_child(HSeparator.new())
 	var player_label := _make_label("SEUS HERÓIS", 13)
 	player_label.add_theme_color_override("font_color", GOLD)
+	_ribbon(player_label, Color("#10395c"))
 	rows.add_child(player_label)
 	ui["player"] = HBoxContainer.new()
 	ui["player"].alignment = BoxContainer.ALIGNMENT_CENTER
@@ -783,6 +805,7 @@ func _build_ui() -> void:
 	rows.add_child(ui["player"])
 	var info_title := _make_label("HERÓI ATIVO", 13)
 	info_title.add_theme_color_override("font_color", GOLD)
+	_ribbon(info_title, Color("#123453"))
 	layout.add_child(info_title)
 	var info_panel := PanelContainer.new()
 	var info_style := _style(Color("#0a1724"), Color("#b98a49"), 3, 10)
@@ -795,6 +818,7 @@ func _build_ui() -> void:
 	var info_row := HBoxContainer.new()
 	info_row.add_theme_constant_override("separation", 8)
 	info_panel.add_child(info_row)
+	_add_ornament(info_panel, 15.0, false)
 	var portrait_frame := PanelContainer.new()
 	portrait_frame.custom_minimum_size = Vector2(70, 86)
 	portrait_frame.add_theme_stylebox_override("panel", _style(Color("#20170f"), Color("#e1b66c"), 3, 5))
@@ -825,6 +849,7 @@ func _build_ui() -> void:
 	info_col.add_child(ui["info"])
 	var hand_title := _make_label("SUA MÃO", 14)
 	hand_title.add_theme_color_override("font_color", GOLD)
+	_ribbon(hand_title, Color("#123453"))
 	layout.add_child(hand_title)
 	var scroll := ScrollContainer.new()
 	scroll.custom_minimum_size = Vector2(0, 137)
@@ -857,6 +882,7 @@ func _build_ui() -> void:
 		button.add_theme_color_override("font_color", CREAM)
 		button.add_theme_color_override("font_disabled_color", Color("#c5b4a0"))
 		ui["actions"].add_child(button)
+		_add_ornament(button, 10.0, false)
 		match label:
 			"Jogar": button.pressed.connect(_on_play)
 			"Atacar": button.pressed.connect(_on_attack)
