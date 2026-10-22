@@ -293,6 +293,12 @@ func _build_ui() -> void:
 	ui["status"] = _make_label("", 14)
 	ui["status"].add_theme_color_override("font_color", CREAM)
 	layout.add_child(ui["status"])
+	var gallery_button := Button.new()
+	gallery_button.text = "VER 48 CARTAS OFICIAIS"
+	gallery_button.custom_minimum_size = Vector2(0, 48)
+	gallery_button.add_theme_font_size_override("font_size", 13)
+	gallery_button.pressed.connect(_show_gallery)
+	layout.add_child(gallery_button)
 	var field := PanelContainer.new()
 	field.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var style := StyleBoxFlat.new()
@@ -378,12 +384,6 @@ func _build_ui() -> void:
 			"Atacar": button.pressed.connect(_on_attack)
 			"As": button.pressed.connect(_on_ace)
 			"Encerrar": button.pressed.connect(_end_turn)
-	var gallery_button := Button.new()
-	gallery_button.text = "VER 48 CARTAS OFICIAIS"
-	gallery_button.custom_minimum_size = Vector2(0, 38)
-	gallery_button.add_theme_font_size_override("font_size", 13)
-	gallery_button.pressed.connect(_show_gallery)
-	layout.add_child(gallery_button)
 	var new_button := Button.new()
 	new_button.text = "Nova partida"
 	new_button.custom_minimum_size = Vector2(0, 32)
@@ -519,7 +519,7 @@ func _show_gallery() -> void:
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(scroll)
 	var grid := GridContainer.new()
-	grid.columns = 3
+	grid.columns = 2
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	grid.add_theme_constant_override("h_separation", 5)
 	grid.add_theme_constant_override("v_separation", 8)
@@ -534,7 +534,7 @@ func _show_gallery() -> void:
 		button.texture_normal = tex
 		button.ignore_texture_size = true
 		button.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-		button.custom_minimum_size = Vector2(165, 230)
+		button.custom_minimum_size = Vector2(230, 320)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.pressed.connect(_show_full_card.bind(tex))
 		grid.add_child(button)
