@@ -707,7 +707,7 @@ func _build_ui() -> void:
 	var layout := VBoxContainer.new()
 	layout.add_theme_constant_override("separation", 2)
 	safe.add_child(layout)
-	var heading := _make_label("CARTAS\nREINOS DO DESTINO", 19)
+	var heading := _make_label("CARTAS\nREINOS DO DESTINO", 18)
 	heading.add_theme_color_override("font_color", Color("#f4ce80"))
 	heading.add_theme_color_override("font_outline_color", Color("#3d1d0b"))
 	heading.add_theme_constant_override("outline_size", 4)
@@ -816,12 +816,13 @@ func _build_ui() -> void:
 		if label == "Encerrar": ui["end_button"] = button
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.custom_minimum_size = Vector2(0, 50)
-		button.add_theme_font_size_override("font_size", 13)
-		var action_color := Color("#6d131a") if label == "Atacar" else Color("#123d74") if label == "Defender" else Color("#1a6149") if label == "Ás" else Color("#604019") if label == "Jogar" else Color("#872322")
+		button.add_theme_font_size_override("font_size", 12)
+		var action_color := Color("#801b23") if label == "Atacar" else Color("#123e79") if label == "Defender" else Color("#116044") if label == "Ás" else Color("#63401b") if label == "Jogar" else Color("#8e1e25")
 		button.add_theme_stylebox_override("normal", _style(action_color, Color("#dcb46c"), 3, 9))
 		button.add_theme_stylebox_override("hover", _style(action_color.lightened(0.2), Color("#ffe1a3"), 3, 9))
 		button.add_theme_stylebox_override("pressed", _style(action_color.darkened(0.2), Color("#ffe1a3"), 3, 9))
 		button.add_theme_color_override("font_color", CREAM)
+		button.add_theme_color_override("font_disabled_color", Color("#b6a79a"))
 		ui["actions"].add_child(button)
 		match label:
 			"Jogar": button.pressed.connect(_on_play)
@@ -833,13 +834,13 @@ func _build_ui() -> void:
 	bottom.add_theme_constant_override("separation", 4)
 	layout.add_child(bottom)
 	var new_button := Button.new()
-	new_button.text = "Nova partida"
+	new_button.text = "↻ Nova partida"
 	new_button.custom_minimum_size = Vector2(0, 30)
 	new_button.add_theme_font_size_override("font_size", 12)
 	new_button.pressed.connect(new_game)
 	bottom.add_child(new_button)
 	var gallery_button := Button.new()
-	gallery_button.text = "VER 48 CARTAS OFICIAIS"
+	gallery_button.text = "✦ Coleção de cartas"
 	gallery_button.custom_minimum_size = Vector2(0, 30)
 	gallery_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	gallery_button.add_theme_font_size_override("font_size", 12)
@@ -864,7 +865,7 @@ func _make_card(text: String, is_red: bool, pressed: Callable, border: Color = G
 	button.add_theme_font_size_override("font_size", 13)
 	var style := _style(CREAM, border, border_width, 9)
 	style.shadow_color = Color(0, 0, 0, 0.4)
-	style.shadow_size = 3
+	style.shadow_size = 5
 	for state in ["normal", "hover", "pressed", "focus", "disabled"]:
 		button.add_theme_stylebox_override(state, style)
 	button.add_theme_color_override("font_color", RED if is_red else INK)
@@ -1004,8 +1005,8 @@ func _rebuild_hand() -> void:
 		ui["hand"].remove_child(child)
 		child.queue_free()
 	hand_views.clear()
-	var cw: float = clampf((size.x - 30.0) / 4.0 - 4.0, 92.0, 128.0)
-	var ch: float = 133.0
+	var cw: float = clampf((size.x - 30.0) / 4.0 - 4.0, 78.0, 128.0)
+	var ch: float = 137.0
 	for i in hands[0].size():
 		var c: Dictionary = hands[0][i]
 		var selected: bool = i == selected_index
