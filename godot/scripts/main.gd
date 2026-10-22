@@ -688,7 +688,7 @@ func _side_status() -> Dictionary:
 
 func _build_ui() -> void:
 	var background := ColorRect.new()
-	background.color = Color("#0f1b22")
+	background.color = Color("#07121c")
 	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(background)
 	var page := ScrollContainer.new()
@@ -707,8 +707,10 @@ func _build_ui() -> void:
 	var layout := VBoxContainer.new()
 	layout.add_theme_constant_override("separation", 4)
 	safe.add_child(layout)
-	var heading := _make_label("CARTAS  -  REINOS DO DESTINO", 16)
-	heading.add_theme_color_override("font_color", GOLD)
+	var heading := _make_label("♛  CARTAS  ♛\nREINOS DO DESTINO", 22)
+	heading.add_theme_color_override("font_color", Color("#f4ce80"))
+	heading.add_theme_color_override("font_outline_color", Color("#3d1d0b"))
+	heading.add_theme_constant_override("outline_size", 4)
 	layout.add_child(heading)
 	var top := HBoxContainer.new()
 	top.add_theme_constant_override("separation", 8)
@@ -723,12 +725,12 @@ func _build_ui() -> void:
 	top.add_child(ui["foe"]["root"])
 	var field := PanelContainer.new()
 	field.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	field.custom_minimum_size = Vector2(0, 500)
-	field.add_theme_stylebox_override("panel", _style(Color("#173528"), GOLD, 5, 16))
+	field.custom_minimum_size = Vector2(0, 460)
+	field.add_theme_stylebox_override("panel", _style(Color("#0a1721"), Color("#c9a062"), 5, 16))
 	field.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW
 	layout.add_child(field)
 	var felt := Gradient.new()
-	felt.colors = PackedColorArray([Color("#2f6d4f"), Color("#0e231a")])
+	felt.colors = PackedColorArray([Color("#294052"), Color("#07111c")])
 	felt.offsets = PackedFloat32Array([0.0, 1.0])
 	var felt_tex := GradientTexture2D.new()
 	felt_tex.gradient = felt
@@ -748,7 +750,7 @@ func _build_ui() -> void:
 	var rows := VBoxContainer.new()
 	rows.add_theme_constant_override("separation", 4)
 	margin.add_child(rows)
-	var enemy_label := _make_label("REINO ADVERSARIO", 13)
+	var enemy_label := _make_label("☠  REINO ADVERSÁRIO  ☠", 16)
 	enemy_label.add_theme_color_override("font_color", GOLD)
 	rows.add_child(enemy_label)
 	ui["enemy"] = HBoxContainer.new()
@@ -761,7 +763,7 @@ func _build_ui() -> void:
 	ui["counts"].add_theme_color_override("font_color", CREAM)
 	rows.add_child(ui["counts"])
 	rows.add_child(HSeparator.new())
-	var player_label := _make_label("SEUS HEROIS", 13)
+	var player_label := _make_label("♛  SEUS HERÓIS  ♛", 16)
 	player_label.add_theme_color_override("font_color", GOLD)
 	rows.add_child(player_label)
 	ui["player"] = HBoxContainer.new()
@@ -769,21 +771,37 @@ func _build_ui() -> void:
 	ui["player"].size_flags_vertical = Control.SIZE_EXPAND_FILL
 	ui["player"].add_theme_constant_override("separation", 6)
 	rows.add_child(ui["player"])
+	var info_title := _make_label("⚔  HERÓI ATIVO  ⚔", 15)
+	info_title.add_theme_color_override("font_color", GOLD)
+	layout.add_child(info_title)
 	var info_panel := PanelContainer.new()
-	info_panel.add_theme_stylebox_override("panel", _style(Color("#0b1a22"), Color("#79633d"), 2, 8))
+	info_panel.add_theme_stylebox_override("panel", _style(Color("#0a1724"), Color("#b98a49"), 3, 10))
 	layout.add_child(info_panel)
+	var info_row := HBoxContainer.new()
+	info_row.add_theme_constant_override("separation", 8)
+	info_panel.add_child(info_row)
+	var portrait := TextureRect.new()
+	portrait.custom_minimum_size = Vector2(86, 112)
+	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	info_row.add_child(portrait)
+	ui["portrait"] = portrait
 	ui["info"] = _make_label("", 12)
 	ui["info"].horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	ui["info"].custom_minimum_size = Vector2(0, 58)
 	ui["info"].add_theme_color_override("font_color", CREAM)
-	info_panel.add_child(ui["info"])
+	ui["info"].size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info_row.add_child(ui["info"])
+	var hand_title := _make_label("✦  SUA MÃO  ✦", 17)
+	hand_title.add_theme_color_override("font_color", GOLD)
+	layout.add_child(hand_title)
 	var scroll := ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(0, 206)
+	scroll.custom_minimum_size = Vector2(0, 178)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	layout.add_child(scroll)
 	ui["hand"] = HBoxContainer.new()
-	ui["hand"].custom_minimum_size = Vector2(0, 204)
+	ui["hand"].custom_minimum_size = Vector2(0, 176)
 	ui["hand"].add_theme_constant_override("separation", 4)
 	scroll.add_child(ui["hand"])
 	ui["actions"] = HBoxContainer.new()
@@ -795,12 +813,13 @@ func _build_ui() -> void:
 		button.set_meta("id", label)
 		if label == "Encerrar": ui["end_button"] = button
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		button.custom_minimum_size = Vector2(0, 46)
+		button.custom_minimum_size = Vector2(0, 58)
 		button.add_theme_font_size_override("font_size", 13)
-		button.add_theme_stylebox_override("normal", _style(Color("#aa854a"), Color("#f1d5a0"), 1, 7))
-		button.add_theme_stylebox_override("hover", _style(Color("#c39b57"), Color("#f1d5a0"), 1, 7))
-		button.add_theme_stylebox_override("pressed", _style(Color("#8a6a38"), Color("#f1d5a0"), 1, 7))
-		button.add_theme_color_override("font_color", Color("#1c2726"))
+		var action_color := Color("#6d131a") if label == "Atacar" else Color("#123d74") if label == "Defender" else Color("#1a6149") if label == "Ás" else Color("#604019") if label == "Jogar" else Color("#872322")
+		button.add_theme_stylebox_override("normal", _style(action_color, Color("#dcb46c"), 3, 9))
+		button.add_theme_stylebox_override("hover", _style(action_color.lightened(0.2), Color("#ffe1a3"), 3, 9))
+		button.add_theme_stylebox_override("pressed", _style(action_color.darkened(0.2), Color("#ffe1a3"), 3, 9))
+		button.add_theme_color_override("font_color", CREAM)
 		ui["actions"].add_child(button)
 		match label:
 			"Jogar": button.pressed.connect(_on_play)
@@ -947,7 +966,7 @@ func _make_hero_card(i: int) -> Button:
 		var power_line: String = _short_ace(h["suit"])
 		var passive := _short_passive(h)
 		if passive != "": power_line += "  /  " + passive
-		_badge(card, ["VIDA %d/%d   ATQ %d" % [h["hp"],h["max_hp"],h["atk"]], "DEF %d   ESCUDO %d" % [h["def"],h["shield"]], power_line], float(h["hp"]) / float(h["max_hp"]), 68.0)
+		_badge(card, ["VIDA %d/%d  |  ATQ %d" % [h["hp"],h["max_hp"],h["atk"]], "DEF %d  |  ESC %d" % [h["def"],h["shield"]]], float(h["hp"]) / float(h["max_hp"]), 51.0)
 	card.set_drag_forwarding(_drag_hero.bind(i), _can_drop_on_hero.bind(i), _drop_on_hero.bind(i))
 	if h["hp"] <= 0:
 		card.modulate = Color(0.5, 0.38, 0.38)
@@ -984,7 +1003,7 @@ func _rebuild_hand() -> void:
 		child.queue_free()
 	hand_views.clear()
 	var cw: float = clampf((size.x - 30.0) / 4.0 - 4.0, 92.0, 128.0)
-	var ch: float = cw * 1.45
+	var ch: float = cw * 1.48
 	for i in hands[0].size():
 		var c: Dictionary = hands[0][i]
 		var selected: bool = i == selected_index
@@ -1043,6 +1062,10 @@ func _refresh() -> void:
 		end_tween.tween_property(end_button, "modulate", Color(1.4, 1.3, 0.9), 0.5)
 		end_tween.tween_property(end_button, "modulate", Color.WHITE, 0.5)
 	ui["info"].text = _info_text()
+	if selected_actor >= 0 and selected_actor < heroes.size():
+		var active: Dictionary = heroes[selected_actor]
+		var active_key: String = str(active["suit"]) + str(active["rank"])
+		ui["portrait"].texture = card_art.get(active_key, null)
 	ui["message"].text = history.back() if not history.is_empty() else ""
 	_flush_fx()
 
