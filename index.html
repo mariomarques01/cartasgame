@@ -59,13 +59,17 @@ header{height:32px}
 #handPanel .controls{grid-template-rows:32px 32px;gap:3px}
 #handPanel .controls button{height:32px}
 }
+
+.official-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:6px;pointer-events:none;background:#172722}
+.playing-card:has(.official-art) .emblem,.playing-card:has(.official-art) .name,.playing-card:has(.official-art) .corner{visibility:hidden}
+.playing-card:has(.official-art) .stats,.playing-card:has(.official-art) .bar{position:relative;z-index:1;background:#112820ed;color:#fff}
 </style></head>
 <body><main><header><div><h1>⚔ CARTAS — REINOS DO DESTINO</h1><span class="status">Tabuleiro corrigido • Versão 1.5</span></div><button id="reset">Nova partida</button></header>
 <div class="panel"><div id="score"></div><div id="notice"></div></div>
 <div class="board"><section class="panel"><h2>⚔ Reino adversário ⚔</h2><div id="enemy" class="flex"></div><p id="enemyHand" class="status" style="text-align:center"></p><div id="enemyBacks"></div></section><div class="field">⚜ CAMPO DE BATALHA ⚜</div><div class="table-piles"><div class="pile"><div class="playing-card back"><div class="emblem">✦</div></div><span id="deckCount"></span></div><div class="pile"><div class="playing-card"><div class="emblem">♜</div></div><span id="discardCount"></span></div></div><div class="field">⚜ SEUS GUERREIROS ⚜</div><section class="panel"><h2>Seu reino</h2><div id="player" class="flex"></div></section></div>
 <section class="panel" id="handPanel"><h2>Sua mão — escolha uma carta</h2><div id="hand" class="flex"></div><p id="chosen" class="hint">Nenhuma carta selecionada.</p><div class="controls"><label>Herói <select id="actor"></select></label><label>Alvo <select id="target"></select></label><button id="play">Jogar carta</button><button id="attack">Atacar</button><button id="ace">Ativar Ás do herói</button><button id="end">Encerrar turno</button></div><p class="small status">Cada turno permite 1 carta, 1 Ás e 1 ataque. Para cartas de Copas/Ouros, escolha o herói que as utiliza e o alvo aliado; para ataques, escolha um inimigo.</p></section>
 <section class="panel" id="logPanel"><h2>Registro auditável</h2><div id="log" class="log" aria-live="polite"></div></section><footer>Sem serviços externos, sem duplicação de cartas. As ilustrações finais poderão substituir os cartões provisórios.</footer></main>
-<script>
+<script src="card-art.js"></script><script>
 "use strict";
 const SUITS=["♥","♦","♠","♣"],NAMES={"♥":"Copas","♦":"Ouros","♠":"Espadas","♣":"Paus"};
 const roster=[
@@ -129,8 +133,9 @@ let cards=g.hands[1];let offensive=cards.find(c=>!c.joker&&(c.s==="♠"||c.s==="
 if(offensive)applyCard(1,offensive,attacker,target);else if(support)applyCard(1,support,attacker,attacker);
 if(!g.usedAttack&&!g.over){target=alive(0).slice().sort((a,b)=>a.hp-b.hp)[0];if(target)basic(1,attacker,target);}
 if(!g.over)endTurn();else render()}
-function heroMarkup(h){let red=h.s==="♥"||h.s==="♦";let emblem=h.rank==="K"?"♚":h.rank==="Q"?"♛":"♞";return '<div class="playing-card '+(red?"red ":"")+(h.hp<=0?"dead":"")+'"><span class="corner">'+h.rank+' '+h.s+'</span><div class="emblem">'+emblem+'</div><div class="name">'+h.name+'</div><div class="bar" style="width:95%"><span style="width:'+(h.hp/h.max*100)+'%"></span></div><div class="stats">♥ '+h.hp+'/'+h.max+' · 🛡 '+h.shield+'<br>⚔ '+h.atk+' · DEF '+h.def+'</div></div>'}
-function cardMarkup(c,i){let red=c.s==="♥"||c.s==="♦";let name=c.joker?(c.joker==="red"?"Coringa Vermelho":"Coringa Azul"):c.n+" de "+NAMES[c.s];return '<div class="playing-card '+(red?"red ":"")+(g.selected===c.id?"selected":"")+'" data-index="'+i+'" role="button" tabindex="0"><span class="corner">'+(c.n||"★")+' '+(c.s||"✦")+'</span><div class="emblem">'+(c.joker?"🃏":c.s)+'</div><div class="name">'+name+'</div><div class="stats">'+(c.joker?"Poder especial":"Potência "+power(c.n))+' · ⚡ '+(c.joker?3:cost(c.n))+'</div></div>'}
+function artwork(key){const path=window.CARD_ART[key];return path?'<img class="official-art" src="'+path+'" alt="'+key+'" draggable="false">':""}
+function heroMarkup(h){let red=h.s==="♥"||h.s==="♦";let emblem=h.rank==="K"?"♚":h.rank==="Q"?"♛":"♞";return '<div class="playing-card '+(red?"red ":"")+(h.hp<=0?"dead":"")+'">'+artwork(h.s+h.rank)+'<span class="corner">'+h.rank+' '+h.s+'</span><div class="emblem">'+emblem+'</div><div class="name">'+h.name+'</div><div class="bar" style="width:95%"><span style="width:'+(h.hp/h.max*100)+'%"></span></div><div class="stats">♥ '+h.hp+'/'+h.max+' · 🛡 '+h.shield+'<br>⚔ '+h.atk+' · DEF '+h.def+'</div></div>'}
+function cardMarkup(c,i){let red=c.s==="♥"||c.s==="♦";let name=c.joker?(c.joker==="red"?"Coringa Vermelho":"Coringa Azul"):c.n+" de "+NAMES[c.s];return '<div class="playing-card '+(red?"red ":"")+(g.selected===c.id?"selected":"")+'" data-index="'+i+'" role="button" tabindex="0">'+artwork(c.joker?'joker-'+c.joker:c.s+c.n)+'<span class="corner">'+(c.n||"★")+' '+(c.s||"✦")+'</span><div class="emblem">'+(c.joker?"🃏":c.s)+'</div><div class="name">'+name+'</div><div class="stats">'+(c.joker?"Poder especial":"Potência "+power(c.n))+' · ⚡ '+(c.joker?3:cost(c.n))+'</div></div>'}
 function render(){if(!g)return;$("score").innerHTML="<strong>Rodada "+g.round+"</strong> · Você "+g.glory[0]+" PG / "+g.energy[0]+" ⚡ · Adversário "+g.glory[1]+" PG / "+g.energy[1]+" ⚡ · Baralho "+g.deck.length+" · Descarte "+g.discard.length;
 $("notice").textContent=g.over?"PARTIDA ENCERRADA":g.turn===0?"Seu turno":"Turno adversário";
 for(const side of [0,1]){$(side?"enemy":"player").innerHTML=g.heroes.filter(h=>h.side===side).map(heroMarkup).join("")}

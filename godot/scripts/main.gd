@@ -1,6 +1,6 @@
 extends Control
 ## Cartas — Reinos do Destino | protótipo Godot vertical.
-## Cena e interface criadas por código, sem dependência de artes externas.
+## Interface responsiva com catálogo de artes oficiais.
 
 const SUITS := ["♥", "♦", "♠", "♣"]
 const MAX_ENERGY := 6
@@ -30,24 +30,15 @@ const CREAM := Color("#f4e3bf")
 const INK := Color("#26312f")
 const GREEN := Color("#15392f")
 const RED := Color("#9e3e45")
-const ART_PATHS := {
-	"8♣": "res://assets/cards/8_paus.png",
-	"9♣": "res://assets/cards/9_paus.png",
-	"10♣": "res://assets/cards/10_paus.png",
-	"joker-red": "res://assets/cards/coringa_vermelho.png",
-	"joker-blue": "res://assets/cards/coringa_azul.png"
-}
+
 var card_art: Dictionary = {}
-const OFFICIAL_FILES := ["01583ED9-28A8-4725-97DD-1C56923D2627.png", "03C145CF-AA24-4473-A242-198878B21D5E.png", "0504134E-5D18-4E14-B65E-091849085C15.png", "07B0E3EF-3943-46F6-BDE9-E5A63FF29E14.png", "094D1C35-057C-4D95-9CF9-D94669F2488D.png", "0B8439E8-522A-4E08-B643-AACC1FF4CF38.png", "137F44B5-18E8-4B40-AA47-DEB1B4887B6A.png", "18722EAD-EAF6-4DB5-B416-589B5C51CB66.png", "1BD3C92D-17AA-4263-B0BE-7916383A6B29.png", "21290D1A-EBB6-41AA-8C76-F449A8B6A322.png", "25AE5C9C-EF9F-453E-83D5-85033D93D95B.png", "29E05D5C-7976-49D2-96D7-672643F0932D.png", "30222BFD-D9A2-4B9E-AC28-F1A918DE1E0C.png", "33B99FFE-BD7A-4B8E-B36F-7020ADA1B99B.png", "33C3AF60-09E2-4A6A-91FA-F586684577E0.png", "372B0BEC-B222-43A1-B88D-EB7E0530EDFD.png", "38036FA2-360C-4358-94E0-A79DF710E73F.png", "3A042586-42F3-489B-854B-E4400C72A212.png", "42521BF4-A1E7-4FEE-A829-12DA0B642D63.png", "4478E892-8D08-4183-9F2B-F9A94D0F1E7E.png", "4BB0A19D-2C42-4D73-9B19-8C086A1DFF2E.png", "58F8B4E0-3BFD-4505-A245-E418D83ED525.png", "5C87AAC0-BDDC-4C53-A780-AB44FD5C2086.png", "5D35864D-DEE9-4957-A06D-BCD188350E4E.png", "684F8EC7-49CE-4F3E-850F-A3C194D6EF25.png", "69B55E35-6687-4FFA-9E21-AD6FD8BDD19B.png", "6E7A2C65-F384-4465-8E89-13E3B9E65D2A.png", "7DACFFCD-4BD9-419E-ACE8-8E655927AD08.png", "7F8CC87E-464A-403C-81A5-2BABF53945E4.png", "87D6FFA5-8E98-485C-9F51-FF569B366316.png", "8E8B9BAF-2665-4771-9EE8-4998E865C425.png", "90A6F33E-B1D0-4B88-84A6-E714BC4F480A.png", "97812E30-8DE5-4FE1-9C5A-936F6FA184F3.png", "9ADFECC2-5730-4C5C-9753-E5097F4E1157.png", "A390C6AD-550C-4882-90BE-FAF09907A6F9.png", "AA7745B6-5AB6-4E61-AD9F-1DEA6033B994.png", "B19FBF50-D70C-4275-B670-3A8C8AA1EAC8.png", "BBA3FD41-1CAA-4856-80E6-51F67BEB9B40.png", "BDEB88BF-2F0A-4AE8-A8E7-5961219E9428.png", "C05ABC18-08B5-4554-82F2-5FAFBD394861.png", "D464F402-BBFE-4730-B398-3D0194EEB45F.png", "E3488C6B-D59C-447C-A840-4B8C2DBE472E.png", "E5D67867-9EC5-47F2-B679-9120FBC07CA9.png", "EBBEDC42-8CBF-4F94-8782-3E611856ACC7.png", "F62DB938-73A1-42C5-92BD-5878C7BE10B0.png", "FCA9D85E-0C26-4DEF-A022-5AE64571AB5D.png", "FCDF1721-C3CF-4ABD-9125-0C24ED3BF049.png", "FEB41E7E-D30A-4831-BB8F-523EAA959E13.png"]
-const VERIFIED_ART := {
-	"♦K": "res://assets/cards/01583ED9-28A8-4725-97DD-1C56923D2627.png",
-	"♥9": "res://assets/cards/03C145CF-AA24-4473-A242-198878B21D5E.png",
-	"♣10": "res://assets/cards/0504134E-5D18-4E14-B65E-091849085C15.png",
-	"♠J": "res://assets/cards/07B0E3EF-3943-46F6-BDE9-E5A63FF29E14.png",
-	"♥3": "res://assets/cards/094D1C35-057C-4D95-9CF9-D94669F2488D.png",
-	"joker-red": "res://assets/cards/0B8439E8-522A-4E08-B643-AACC1FF4CF38.png"
-}
+const ArtCatalog = preload("res://scripts/card_art.gd")
+const VERIFIED_ART = ArtCatalog.PATHS
 var gallery_overlay: Control
+var hero_views: Dictionary = {}
+var hand_views: Array[Button] = []
+var busy := false
+var match_id := 0
 
 func _suit_name(suit: String) -> String:
 	match suit:
@@ -76,6 +67,10 @@ func _hero(name: String, suit: String, rank: String, side: int, hp: int, atk: in
 	return {"name":name,"suit":suit,"rank":rank,"side":side,"hp":hp,"max_hp":hp,"atk":atk,"def":defense,"shield":0}
 
 func new_game() -> void:
+	match_id += 1
+	busy = false
+	selected_actor = 0
+	selected_target = 3
 	heroes = [
 		_hero("Rei de Espadas","♠","K",0,14,4,3),
 		_hero("Rainha de Copas","♥","Q",0,11,2,2),
@@ -101,12 +96,12 @@ func new_game() -> void:
 	selected_index = -1
 	history.clear()
 	for i in 3:
-		_draw(0)
-		_draw(1)
+		_draw_card(0)
+		_draw_card(1)
 	_log("Partida iniciada com um baralho único de 38 cartas.")
 	_begin_turn()
 
-func _draw(side: int) -> void:
+func _draw_card(side: int) -> void:
 	if deck.is_empty():
 		return
 	hands[side].append(deck.pop_back())
@@ -122,7 +117,7 @@ func _begin_turn() -> void:
 			heroes[i]["shield"] = 0
 	energy[current_side] = mini(MAX_ENERGY, energy[current_side] + 2)
 	if not (round_number == 1 and current_side == 0):
-		_draw(current_side)
+		_draw_card(current_side)
 	_log("Rodada %d — %s." % [round_number, "seu turno" if current_side == 0 else "turno rival"])
 	_refresh()
 
@@ -225,8 +220,8 @@ func _activate_ace(actor: int, target: int) -> void:
 			heroes[target]["shield"] = mini(4,int(heroes[target]["shield"]) + 1)
 		"♦": energy[current_side] = mini(6,energy[current_side] + 3)
 		"♠":
-			_draw(current_side)
-			_draw(current_side)
+			_draw_card(current_side)
+			_draw_card(current_side)
 			if not hands[current_side].is_empty():
 				discard.append(hands[current_side].pop_back())
 		"♣":
@@ -235,7 +230,7 @@ func _activate_ace(actor: int, target: int) -> void:
 	_refresh()
 
 func _end_turn() -> void:
-	if finished: return
+	if finished or busy: return
 	while hands[current_side].size() > 5:
 		discard.append(hands[current_side].pop_back())
 	if current_side == 1 and round_number == 5:
@@ -285,13 +280,19 @@ func _build_ui() -> void:
 	background.color = Color("#101c23")
 	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(background)
+	var page := ScrollContainer.new()
+	page.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	page.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	add_child(page)
 	var safe := MarginContainer.new()
+	safe.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	safe.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	safe.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	safe.add_theme_constant_override("margin_left", 10)
 	safe.add_theme_constant_override("margin_right", 10)
-	safe.add_theme_constant_override("margin_top", 22)
+	safe.add_theme_constant_override("margin_top", 10)
 	safe.add_theme_constant_override("margin_bottom", 16)
-	add_child(safe)
+	page.add_child(safe)
 	var layout := VBoxContainer.new()
 	layout.add_theme_constant_override("separation", 6)
 	safe.add_child(layout)
@@ -303,7 +304,7 @@ func _build_ui() -> void:
 	layout.add_child(ui["status"])
 	var gallery_button := Button.new()
 	gallery_button.text = "VER 48 CARTAS OFICIAIS"
-	gallery_button.custom_minimum_size = Vector2(0, 48)
+	gallery_button.custom_minimum_size = Vector2(0, 36)
 	gallery_button.add_theme_font_size_override("font_size", 13)
 	gallery_button.pressed.connect(_show_gallery)
 	layout.add_child(gallery_button)
@@ -362,7 +363,7 @@ func _build_ui() -> void:
 	hand_label.add_theme_color_override("font_color", GOLD)
 	layout.add_child(hand_label)
 	var scroll := ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(0, 112)
+	scroll.custom_minimum_size = Vector2(0, 158)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	layout.add_child(scroll)
@@ -404,7 +405,7 @@ func _build_ui() -> void:
 
 func _make_pile(title: String) -> PanelContainer:
 	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(72, 74)
+	panel.custom_minimum_size = Vector2(62, 48)
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color("#284c4b")
 	style.border_color = GOLD
@@ -419,7 +420,8 @@ func _make_pile(title: String) -> PanelContainer:
 func _make_card(text: String, is_red: bool, pressed: Callable, selected: bool = false) -> Button:
 	var button := Button.new()
 	button.text = text
-	button.custom_minimum_size = Vector2(95, 118)
+	button.custom_minimum_size = Vector2(95, 160)
+	button.clip_text = true
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	button.add_theme_font_size_override("font_size", 12)
@@ -443,28 +445,44 @@ func _refresh() -> void:
 	ui["counts"].text = "Baralho: %d   •   Descarte: %d   •   Mão rival: %d" % [deck.size(),discard.size(),hands[1].size()]
 	for side in 2:
 		var container: HBoxContainer = ui["player"] if side == 0 else ui["enemy"]
-		for child in container.get_children(): child.queue_free()
+		for child in container.get_children():
+			container.remove_child(child)
+			child.queue_free()
 		for i in heroes.size():
 			var h: Dictionary = heroes[i]
 			if h["side"] != side: continue
 			var card := _make_card("%s\n%s\nVIDA %d/%d\nDEF %d  ESC %d" % [_suit_name(h["suit"]),h["name"],h["hp"],h["max_hp"],h["def"],h["shield"]],h["suit"] in ["♥","♦"],func(): _select_hero(i),i == selected_actor or i == selected_target)
-			card.custom_minimum_size = Vector2(0, 118)
+			card.custom_minimum_size = Vector2(0, 160)
 			container.add_child(card)
+			hero_views[i] = card
+			card.set_drag_forwarding(Callable(), _can_drop_on_hero.bind(i), _drop_on_hero.bind(i))
 			var hero_key: String = h["suit"] + h["rank"]
 			if card_art.has(hero_key):
 				_attach_art(card, card_art[hero_key], true)
-	for child in ui["hand"].get_children(): child.queue_free()
+				_badge(card, "♥ %d/%d  ⚔ %d\nDEF %d  ESC %d" % [h["hp"],h["max_hp"],h["atk"],h["def"],h["shield"]])
+			card.modulate.a = 0.35 if h["hp"] <= 0 else 1.0
+	for child in ui["hand"].get_children():
+		ui["hand"].remove_child(child)
+		child.queue_free()
+	hand_views.clear()
 	for i in hands[0].size():
 		var c: Dictionary = hands[0][i]
 		var title: String = "CORINGA" if c.has("joker") else "%d\n%s" % [c["value"],_suit_name(c["suit"])]
 		var card := _make_card("%s\nCUSTO %d" % [title,_cost(c)],c.get("suit","") in ["♥","♦"],func(): _select_card(i),i == selected_index)
-		card.custom_minimum_size = Vector2(90, 110)
+		card.custom_minimum_size = Vector2(104, 150)
 		ui["hand"].add_child(card)
+		hand_views.append(card)
+		card.set_drag_forwarding(_drag_card.bind(i), Callable(), Callable())
+		card.tooltip_text = _ability(c)
 		var art_key: String = ("joker-red" if c["joker"] == "red" else "joker-blue") if c.has("joker") else c["suit"] + str(c["value"])
 		if card_art.has(art_key):
 			_attach_art(card, card_art[art_key], false)
+			_badge(card, "%s • %d E" % [_ability(c), _cost(c)])
 	for button in ui["actions"].get_children():
-		button.disabled = finished or current_side != 0
+		button.disabled = finished or current_side != 0 or busy
+		if button.text == "Jogar": button.disabled = button.disabled or used_card or selected_index < 0
+		if button.text == "Atacar": button.disabled = button.disabled or used_attack
+		if button.text == "As": button.disabled = button.disabled or used_ace or energy[0] < 2
 	ui["message"].text = history.back() if not history.is_empty() else ""
 
 func _attach_art(card: Button, texture: Texture2D, _is_hero: bool) -> void:
@@ -481,7 +499,7 @@ func _attach_art(card: Button, texture: Texture2D, _is_hero: bool) -> void:
 	art.offset_bottom = -2
 	card.add_child(art)
 func _select_hero(index: int) -> void:
-	if finished or current_side != 0 or heroes[index]["hp"] <= 0: return
+	if busy or finished or current_side != 0 or heroes[index]["hp"] <= 0: return
 	if heroes[index]["side"] == 0:
 		selected_actor = index
 		if selected_index >= 0 and selected_index < hands[0].size():
@@ -493,20 +511,130 @@ func _select_hero(index: int) -> void:
 	_refresh()
 
 func _select_card(index: int) -> void:
+	if busy or finished or current_side != 0: return
 	selected_index = index
+	var card: Dictionary = hands[0][index]
+	if card.has("joker") or card.get("suit", "") in ["♥", "♦"]:
+		selected_target = selected_actor
+	elif selected_target not in _alive(1):
+		selected_target = _alive(1)[0]
+	_log(_ability(card) + " — escolha o alvo e toque Jogar, ou arraste a carta.")
 	_refresh()
 
 func _on_play() -> void:
-	if current_side != 0 or finished: return
-	if not _play_card(0,selected_index,selected_actor,selected_target):
-		_log("Jogada inválida: selecione uma carta e um alvo compatível.")
+	if current_side != 0 or finished or busy: return
+	if not _can_play_on(selected_index, selected_target):
+		_log("Jogada inválida: verifique energia, alvo e ações disponíveis.")
 		_refresh()
+		return
+	var index := selected_index
+	var actor := selected_actor
+	var target := selected_target
+	var token := match_id
+	busy = true
+	await _fly_card(index, target)
+	if token != match_id: return
+	busy = false
+	_play_card(0, index, actor, target)
+	_pulse(target, Color("77e5ad") if heroes[target]["side"] == 0 else Color("ff7777"))
 
 func _on_attack() -> void:
-	_basic_attack(selected_actor,selected_target)
+	if busy or current_side != 0 or finished or used_attack: return
+	var target := selected_target
+	_basic_attack(selected_actor,target)
+	_pulse(target, Color("ff7777"))
 
 func _on_ace() -> void:
+	if busy or current_side != 0: return
 	_activate_ace(selected_actor,selected_target)
+	_pulse(selected_actor, GOLD)
+
+func _ability(card: Dictionary) -> String:
+	if card.has("joker"): return "Escudo +3"
+	match card["suit"]:
+		"♥": return "Cura"
+		"♦": return "Energia / escudo"
+		"♠": return "Ataque perfurante"
+		"♣": return "Ataque / escudo"
+	return ""
+
+func _badge(card: Control, text: String) -> void:
+	var panel := PanelContainer.new()
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	panel.offset_top = -36
+	panel.offset_left = 4
+	panel.offset_right = -4
+	panel.offset_bottom = -4
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.03, 0.08, 0.1, 0.94)
+	panel.add_theme_stylebox_override("panel", style)
+	card.add_child(panel)
+	var label := _make_label(text, 12)
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.add_theme_color_override("font_color", CREAM)
+	panel.add_child(label)
+
+func _can_play_on(index: int, target: int) -> bool:
+	if busy or finished or current_side != 0 or used_card: return false
+	if index < 0 or index >= hands[0].size() or selected_actor not in _alive(0): return false
+	var card: Dictionary = hands[0][index]
+	if energy[0] < _cost(card): return false
+	if card.has("joker"): return target == selected_actor
+	if card["suit"] in ["♠", "♣"]: return not used_attack and target in _alive(1)
+	return target in _alive(0)
+
+func _drag_card(_position: Vector2, index: int) -> Variant:
+	if busy or finished or current_side != 0 or used_card: return null
+	selected_index = index
+	var preview := TextureRect.new()
+	var card: Dictionary = hands[0][index]
+	preview.texture = card_art.get(card["id"])
+	preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	preview.custom_minimum_size = Vector2(104, 150)
+	if preview.texture == null:
+		preview.add_child(_make_label(card["id"], 24))
+	hand_views[index].set_drag_preview(preview)
+	return {"hand_index": index}
+
+func _can_drop_on_hero(_position: Vector2, data: Variant, target: int) -> bool:
+	return data is Dictionary and data.has("hand_index") and _can_play_on(int(data["hand_index"]), target)
+
+func _drop_on_hero(_position: Vector2, data: Variant, target: int) -> void:
+	selected_index = int(data["hand_index"])
+	selected_target = target
+	_on_play()
+
+func _fly_card(index: int, target: int) -> void:
+	var ghost := Panel.new()
+	ghost.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(ghost)
+	ghost.position = hand_views[index].global_position - global_position
+	ghost.size = hand_views[index].size
+	var card: Dictionary = hands[0][index]
+	var tex: Texture2D = card_art.get(card["id"])
+	if tex:
+		var art := TextureRect.new()
+		art.texture = tex
+		art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		ghost.add_child(art)
+	else:
+		ghost.add_child(_make_label(card["id"], 30))
+	var tween := create_tween()
+	tween.tween_property(ghost, "position", hero_views[target].global_position - global_position, 0.28).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	await tween.finished
+	ghost.queue_free()
+
+func _pulse(target: int, color: Color) -> void:
+	if not hero_views.has(target): return
+	var card: Control = hero_views[target]
+	card.modulate = color
+	var tween := card.create_tween()
+	tween.tween_property(card, "modulate", Color(1, 1, 1, 0.35 if heroes[target]["hp"] <= 0 else 1.0), 0.4)
 
 func _show_gallery() -> void:
 	if is_instance_valid(gallery_overlay):
@@ -538,9 +666,8 @@ func _show_gallery() -> void:
 	grid.add_theme_constant_override("h_separation", 5)
 	grid.add_theme_constant_override("v_separation", 8)
 	scroll.add_child(grid)
-	for i in OFFICIAL_FILES.size():
-		var filename: String = OFFICIAL_FILES[i]
-		var image_path := "res://assets/cards/" + filename
+	for key in VERIFIED_ART:
+		var image_path: String = VERIFIED_ART[key]
 		if not ResourceLoader.exists(image_path):
 			continue
 		var tex: Texture2D = load(image_path)
@@ -548,7 +675,7 @@ func _show_gallery() -> void:
 		button.texture_normal = tex
 		button.ignore_texture_size = true
 		button.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-		button.custom_minimum_size = Vector2(230, 320)
+		button.custom_minimum_size = Vector2(0, 320)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.pressed.connect(_show_full_card.bind(tex))
 		grid.add_child(button)
