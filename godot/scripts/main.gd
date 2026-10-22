@@ -63,7 +63,7 @@ var fast := false ## testes: sem pausas nem animações
 var match_id := 0
 var seen_cards := {}
 var end_tween: Tween
-const BUTTON_TEXT := {"Jogar":"▣\nUSAR CARTA","Atacar":"⚔\nATACAR","Defender":"⬡\nDEFENDER","Ás":"✦\nÁS (2)","Encerrar":"⚑\nENCERRAR"}
+const BUTTON_TEXT := {"Jogar":"USAR\nCARTA","Atacar":"ATACAR","Defender":"DEFENDER","Ás":"ÁS (2)","Encerrar":"ENCERRAR\nTURNO"}
 
 func _suit_name(suit: String) -> String:
 	match suit:
@@ -709,7 +709,7 @@ func _build_ui() -> void:
 	var layout := VBoxContainer.new()
 	layout.add_theme_constant_override("separation", 2)
 	safe.add_child(layout)
-	var heading := _make_label("♛  CARTAS  ♛\nREINOS DO DESTINO", 18)
+	var heading := _make_label("CARTAS\nREINOS DO DESTINO", 18)
 	heading.add_theme_color_override("font_color", Color("#f4ce80"))
 	heading.add_theme_color_override("font_outline_color", Color("#3d1d0b"))
 	heading.add_theme_constant_override("outline_size", 4)
@@ -731,6 +731,8 @@ func _build_ui() -> void:
 	field.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	field.custom_minimum_size = Vector2(0, 365)
 	var field_style := _style(Color("#0a1721"), Color("#c9a062"), 5, 16)
+	field_style.shadow_color = Color("#7e4d1d")
+	field_style.shadow_size = 4
 	field_style.set_expand_margin_all(1)
 	field.add_theme_stylebox_override("panel", field_style)
 	field.clip_contents = true
@@ -758,7 +760,7 @@ func _build_ui() -> void:
 	var rows := VBoxContainer.new()
 	rows.add_theme_constant_override("separation", 2)
 	margin.add_child(rows)
-	var enemy_label := _make_label("☠  REINO ADVERSÁRIO  ☠", 13)
+	var enemy_label := _make_label("REINO ADVERSÁRIO", 13)
 	enemy_label.add_theme_color_override("font_color", GOLD)
 	rows.add_child(enemy_label)
 	ui["enemy"] = HBoxContainer.new()
@@ -771,7 +773,7 @@ func _build_ui() -> void:
 	ui["counts"].add_theme_color_override("font_color", CREAM)
 	rows.add_child(ui["counts"])
 	rows.add_child(HSeparator.new())
-	var player_label := _make_label("♛  SEUS HERÓIS  ♛", 13)
+	var player_label := _make_label("SEUS HERÓIS", 13)
 	player_label.add_theme_color_override("font_color", GOLD)
 	rows.add_child(player_label)
 	ui["player"] = HBoxContainer.new()
@@ -779,11 +781,12 @@ func _build_ui() -> void:
 	ui["player"].size_flags_vertical = Control.SIZE_EXPAND_FILL
 	ui["player"].add_theme_constant_override("separation", 6)
 	rows.add_child(ui["player"])
-	var info_title := _make_label("⚔  HERÓI ATIVO  ⚔", 13)
+	var info_title := _make_label("HERÓI ATIVO", 13)
 	info_title.add_theme_color_override("font_color", GOLD)
 	layout.add_child(info_title)
 	var info_panel := PanelContainer.new()
 	var info_style := _style(Color("#0a1724"), Color("#b98a49"), 3, 10)
+	info_style.set_border_width_all(4)
 	info_style.set_content_margin_all(7)
 	info_style.shadow_color = Color("#a06b2d")
 	info_style.shadow_size = 2
@@ -820,7 +823,7 @@ func _build_ui() -> void:
 	ui["info"].add_theme_color_override("font_color", CREAM)
 	ui["info"].size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	info_col.add_child(ui["info"])
-	var hand_title := _make_label("✦  SUA MÃO  ✦", 14)
+	var hand_title := _make_label("SUA MÃO", 14)
 	hand_title.add_theme_color_override("font_color", GOLD)
 	layout.add_child(hand_title)
 	var scroll := ScrollContainer.new()
@@ -844,7 +847,10 @@ func _build_ui() -> void:
 		button.custom_minimum_size = Vector2(0, 50)
 		button.add_theme_font_size_override("font_size", 11)
 		var action_color := Color("#801b23") if label == "Atacar" else Color("#123e79") if label == "Defender" else Color("#116044") if label == "Ás" else Color("#63401b") if label == "Jogar" else Color("#8e1e25")
-		button.add_theme_stylebox_override("normal", _style(action_color, Color("#dcb46c"), 3, 9))
+		var action_style := _style(action_color, Color("#e6b96e"), 3, 9)
+		action_style.shadow_color = Color("#000000")
+		action_style.shadow_size = 5
+		button.add_theme_stylebox_override("normal", action_style)
 		button.add_theme_stylebox_override("hover", _style(action_color.lightened(0.2), Color("#ffe1a3"), 3, 9))
 		button.add_theme_stylebox_override("pressed", _style(action_color.darkened(0.2), Color("#ffe1a3"), 3, 9))
 		button.add_theme_stylebox_override("disabled", _style(action_color.darkened(0.28), Color("#846b48"), 2, 9))
@@ -861,13 +867,13 @@ func _build_ui() -> void:
 	bottom.add_theme_constant_override("separation", 4)
 	layout.add_child(bottom)
 	var new_button := Button.new()
-	new_button.text = "↻ Nova partida"
+	new_button.text = "NOVA PARTIDA"
 	new_button.custom_minimum_size = Vector2(0, 30)
 	new_button.add_theme_font_size_override("font_size", 12)
 	new_button.pressed.connect(new_game)
 	bottom.add_child(new_button)
 	var gallery_button := Button.new()
-	gallery_button.text = "✦ Coleção de cartas"
+	gallery_button.text = "COLEÇÃO DE CARTAS"
 	gallery_button.custom_minimum_size = Vector2(0, 30)
 	gallery_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	gallery_button.add_theme_font_size_override("font_size", 12)
@@ -1097,7 +1103,7 @@ func _refresh() -> void:
 		var active_key: String = str(active["suit"]) + str(active["rank"])
 		ui["portrait"].texture = card_art.get(active_key, null)
 		ui["hero_name"].text = active["name"].to_upper()
-		ui["hero_stats"].text = "♥ %d/%d     ⚔ %d     ⬡ %d     ◈ %d" % [active["hp"], active["max_hp"], active["atk"], active["def"], active["shield"]]
+		ui["hero_stats"].text = "VIDA %d/%d   ATQ %d   DEF %d   ESC %d" % [active["hp"], active["max_hp"], active["atk"], active["def"], active["shield"]]
 	ui["message"].text = history.back() if not history.is_empty() else ""
 	_flush_fx()
 
