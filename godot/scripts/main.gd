@@ -879,6 +879,25 @@ func _build_ui() -> void:
 		button.add_theme_stylebox_override("hover", _style(action_color.lightened(0.2), Color("#ffe1a3"), 3, 9))
 		button.add_theme_stylebox_override("pressed", _style(action_color.darkened(0.2), Color("#ffe1a3"), 3, 9))
 		button.add_theme_stylebox_override("disabled", _style(action_color.darkened(0.28), Color("#846b48"), 2, 9))
+		# Arte oficial dos botões: mantém ação clicável, foco e estado desabilitado.
+		if label == "Atacar" or label == "Defender":
+			var asset_path: String = "res://assets/ui/Atacar.png" if label == "Atacar" else "res://assets/ui/Defender.png"
+			if ResourceLoader.exists(asset_path):
+				var button_art: Texture2D = load(asset_path)
+				var art_style := StyleBoxTexture.new()
+				art_style.texture = button_art
+				art_style.texture_margin_left = 24.0
+				art_style.texture_margin_right = 24.0
+				art_style.texture_margin_top = 14.0
+				art_style.texture_margin_bottom = 14.0
+				art_style.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH
+				art_style.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH
+				button.add_theme_stylebox_override("normal", art_style)
+				button.add_theme_stylebox_override("hover", art_style)
+				button.add_theme_stylebox_override("pressed", art_style)
+				button.add_theme_stylebox_override("disabled", art_style)
+				button.text = ""
+				button.tooltip_text = "ATACAR" if label == "Atacar" else "DEFENDER"
 		button.add_theme_color_override("font_color", CREAM)
 		button.add_theme_color_override("font_disabled_color", Color("#c5b4a0"))
 		ui["actions"].add_child(button)
