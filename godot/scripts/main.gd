@@ -63,7 +63,7 @@ var fast := false ## testes: sem pausas nem animações
 var match_id := 0
 var seen_cards := {}
 var end_tween: Tween
-const BUTTON_TEXT := {"Jogar":"Jogar carta","Atacar":"Atacar","Defender":"Defender","Ás":"Ás (2)","Encerrar":"Encerrar turno"}
+const BUTTON_TEXT := {"Jogar":"▣\nUSAR CARTA","Atacar":"⚔\nATACAR","Defender":"⬡\nDEFENDER","Ás":"✦\nÁS (2)","Encerrar":"⚑\nENCERRAR"}
 
 func _suit_name(suit: String) -> String:
 	match suit:
@@ -664,6 +664,8 @@ func _style(bg: Color, border: Color, border_width: int, radius: int) -> StyleBo
 	s.border_color = border
 	s.set_border_width_all(border_width)
 	s.set_corner_radius_all(radius)
+	s.shadow_color = Color(0.0, 0.0, 0.0, 0.42)
+	s.shadow_size = 3
 	return s
 
 func _side_status() -> Dictionary:
@@ -726,7 +728,9 @@ func _build_ui() -> void:
 	var field := PanelContainer.new()
 	field.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	field.custom_minimum_size = Vector2(0, 365)
-	field.add_theme_stylebox_override("panel", _style(Color("#0a1721"), Color("#c9a062"), 5, 16))
+	var field_style := _style(Color("#0a1721"), Color("#c9a062"), 5, 16)
+	field_style.set_expand_margin_all(1)
+	field.add_theme_stylebox_override("panel", field_style)
 	field.clip_contents = true
 	layout.add_child(field)
 	var felt := Gradient.new()
@@ -777,7 +781,9 @@ func _build_ui() -> void:
 	info_title.add_theme_color_override("font_color", GOLD)
 	layout.add_child(info_title)
 	var info_panel := PanelContainer.new()
-	info_panel.add_theme_stylebox_override("panel", _style(Color("#0a1724"), Color("#b98a49"), 3, 10))
+	var info_style := _style(Color("#0a1724"), Color("#b98a49"), 3, 10)
+	info_style.set_content_margin_all(5)
+	info_panel.add_theme_stylebox_override("panel", info_style)
 	layout.add_child(info_panel)
 	var info_row := HBoxContainer.new()
 	info_row.add_theme_constant_override("separation", 8)
@@ -788,12 +794,24 @@ func _build_ui() -> void:
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	info_row.add_child(portrait)
 	ui["portrait"] = portrait
+	var info_col := VBoxContainer.new()
+	info_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info_col.add_theme_constant_override("separation", 2)
+	info_row.add_child(info_col)
+	ui["hero_name"] = _make_label("", 14)
+	ui["hero_name"].horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	ui["hero_name"].add_theme_color_override("font_color", Color("#f6d28b"))
+	info_col.add_child(ui["hero_name"])
+	ui["hero_stats"] = _make_label("", 12)
+	ui["hero_stats"].horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	ui["hero_stats"].add_theme_color_override("font_color", Color("#d9e6f1"))
+	info_col.add_child(ui["hero_stats"])
 	ui["info"] = _make_label("", 11)
 	ui["info"].horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	ui["info"].custom_minimum_size = Vector2(0, 58)
 	ui["info"].add_theme_color_override("font_color", CREAM)
 	ui["info"].size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	info_row.add_child(ui["info"])
+	info_col.add_child(ui["info"])
 	var hand_title := _make_label("✦  SUA MÃO  ✦", 14)
 	hand_title.add_theme_color_override("font_color", GOLD)
 	layout.add_child(hand_title)
@@ -816,7 +834,7 @@ func _build_ui() -> void:
 		if label == "Encerrar": ui["end_button"] = button
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.custom_minimum_size = Vector2(0, 50)
-		button.add_theme_font_size_override("font_size", 12)
+		button.add_theme_font_size_override("font_size", 11)
 		var action_color := Color("#801b23") if label == "Atacar" else Color("#123e79") if label == "Defender" else Color("#116044") if label == "Ás" else Color("#63401b") if label == "Jogar" else Color("#8e1e25")
 		button.add_theme_stylebox_override("normal", _style(action_color, Color("#dcb46c"), 3, 9))
 		button.add_theme_stylebox_override("hover", _style(action_color.lightened(0.2), Color("#ffe1a3"), 3, 9))
@@ -1069,6 +1087,8 @@ func _refresh() -> void:
 		var active: Dictionary = heroes[selected_actor]
 		var active_key: String = str(active["suit"]) + str(active["rank"])
 		ui["portrait"].texture = card_art.get(active_key, null)
+		ui["hero_name"].text = active["name"].to_upper()
+		ui["hero_stats"].text = "♥ %d/%d     ⚔ %d     ⬡ %d     ◈ %d" % [active["hp"], active["max_hp"], active["atk"], active["def"], active["shield"]]
 	ui["message"].text = history.back() if not history.is_empty() else ""
 	_flush_fx()
 
