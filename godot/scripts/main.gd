@@ -38,6 +38,8 @@ const ART_PATHS := {
 	"joker-blue": "res://assets/cards/coringa_azul.png"
 }
 var card_art: Dictionary = {}
+const OFFICIAL_FILES := ["01583ED9-28A8-4725-97DD-1C56923D2627.png", "03C145CF-AA24-4473-A242-198878B21D5E.png", "0504134E-5D18-4E14-B65E-091849085C15.png", "07B0E3EF-3943-46F6-BDE9-E5A63FF29E14.png", "094D1C35-057C-4D95-9CF9-D94669F2488D.png", "0B8439E8-522A-4E08-B643-AACC1FF4CF38.png", "137F44B5-18E8-4B40-AA47-DEB1B4887B6A.png", "18722EAD-EAF6-4DB5-B416-589B5C51CB66.png", "1BD3C92D-17AA-4263-B0BE-7916383A6B29.png", "21290D1A-EBB6-41AA-8C76-F449A8B6A322.png", "25AE5C9C-EF9F-453E-83D5-85033D93D95B.png", "29E05D5C-7976-49D2-96D7-672643F0932D.png", "30222BFD-D9A2-4B9E-AC28-F1A918DE1E0C.png", "33B99FFE-BD7A-4B8E-B36F-7020ADA1B99B.png", "33C3AF60-09E2-4A6A-91FA-F586684577E0.png", "372B0BEC-B222-43A1-B88D-EB7E0530EDFD.png", "38036FA2-360C-4358-94E0-A79DF710E73F.png", "3A042586-42F3-489B-854B-E4400C72A212.png", "42521BF4-A1E7-4FEE-A829-12DA0B642D63.png", "4478E892-8D08-4183-9F2B-F9A94D0F1E7E.png", "4BB0A19D-2C42-4D73-9B19-8C086A1DFF2E.png", "58F8B4E0-3BFD-4505-A245-E418D83ED525.png", "5C87AAC0-BDDC-4C53-A780-AB44FD5C2086.png", "5D35864D-DEE9-4957-A06D-BCD188350E4E.png", "684F8EC7-49CE-4F3E-850F-A3C194D6EF25.png", "69B55E35-6687-4FFA-9E21-AD6FD8BDD19B.png", "6E7A2C65-F384-4465-8E89-13E3B9E65D2A.png", "7DACFFCD-4BD9-419E-ACE8-8E655927AD08.png", "7F8CC87E-464A-403C-81A5-2BABF53945E4.png", "87D6FFA5-8E98-485C-9F51-FF569B366316.png", "8E8B9BAF-2665-4771-9EE8-4998E865C425.png", "90A6F33E-B1D0-4B88-84A6-E714BC4F480A.png", "97812E30-8DE5-4FE1-9C5A-936F6FA184F3.png", "9ADFECC2-5730-4C5C-9753-E5097F4E1157.png", "A390C6AD-550C-4882-90BE-FAF09907A6F9.png", "AA7745B6-5AB6-4E61-AD9F-1DEA6033B994.png", "B19FBF50-D70C-4275-B670-3A8C8AA1EAC8.png", "BBA3FD41-1CAA-4856-80E6-51F67BEB9B40.png", "BDEB88BF-2F0A-4AE8-A8E7-5961219E9428.png", "C05ABC18-08B5-4554-82F2-5FAFBD394861.png", "D464F402-BBFE-4730-B398-3D0194EEB45F.png", "E3488C6B-D59C-447C-A840-4B8C2DBE472E.png", "E5D67867-9EC5-47F2-B679-9120FBC07CA9.png", "EBBEDC42-8CBF-4F94-8782-3E611856ACC7.png", "F62DB938-73A1-42C5-92BD-5878C7BE10B0.png", "FCA9D85E-0C26-4DEF-A022-5AE64571AB5D.png", "FCDF1721-C3CF-4ABD-9125-0C24ED3BF049.png", "FEB41E7E-D30A-4831-BB8F-523EAA959E13.png"]
+var gallery_overlay: Control
 
 func _suit_name(suit: String) -> String:
 	match suit:
@@ -376,6 +378,12 @@ func _build_ui() -> void:
 			"Atacar": button.pressed.connect(_on_attack)
 			"As": button.pressed.connect(_on_ace)
 			"Encerrar": button.pressed.connect(_end_turn)
+	var gallery_button := Button.new()
+	gallery_button.text = "VER 48 CARTAS OFICIAIS"
+	gallery_button.custom_minimum_size = Vector2(0, 38)
+	gallery_button.add_theme_font_size_override("font_size", 13)
+	gallery_button.pressed.connect(_show_gallery)
+	layout.add_child(gallery_button)
 	var new_button := Button.new()
 	new_button.text = "Nova partida"
 	new_button.custom_minimum_size = Vector2(0, 32)
@@ -485,3 +493,68 @@ func _on_attack() -> void:
 
 func _on_ace() -> void:
 	_activate_ace(selected_actor,selected_target)
+
+func _show_gallery() -> void:
+	if is_instance_valid(gallery_overlay):
+		gallery_overlay.queue_free()
+	gallery_overlay = ColorRect.new()
+	gallery_overlay.color = Color("#101c23")
+	gallery_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(gallery_overlay)
+	var layout := VBoxContainer.new()
+	layout.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	layout.add_theme_constant_override("separation", 8)
+	gallery_overlay.add_child(layout)
+	var close := Button.new()
+	close.text = "VOLTAR AO JOGO"
+	close.custom_minimum_size = Vector2(0, 56)
+	close.pressed.connect(func(): gallery_overlay.queue_free())
+	layout.add_child(close)
+	var heading := _make_label("GALERIA - 48 CARTAS OFICIAIS", 18)
+	heading.add_theme_color_override("font_color", GOLD)
+	layout.add_child(heading)
+	var hint := _make_label("Artes originais, sem cortes. Toque para ampliar.", 12)
+	layout.add_child(hint)
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	layout.add_child(scroll)
+	var grid := GridContainer.new()
+	grid.columns = 3
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grid.add_theme_constant_override("h_separation", 5)
+	grid.add_theme_constant_override("v_separation", 8)
+	scroll.add_child(grid)
+	for i in OFFICIAL_FILES.size():
+		var filename: String = OFFICIAL_FILES[i]
+		var image_path := "res://assets/cards/" + filename
+		if not ResourceLoader.exists(image_path):
+			continue
+		var tex: Texture2D = load(image_path)
+		var button := TextureButton.new()
+		button.texture_normal = tex
+		button.ignore_texture_size = true
+		button.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+		button.custom_minimum_size = Vector2(165, 230)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.pressed.connect(_show_full_card.bind(tex))
+		grid.add_child(button)
+
+func _show_full_card(tex: Texture2D) -> void:
+	var shade := ColorRect.new()
+	shade.color = Color(0.02, 0.05, 0.06, 0.97)
+	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	gallery_overlay.add_child(shade)
+	var image := TextureRect.new()
+	image.texture = tex
+	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	image.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	image.offset_top = 60
+	image.offset_bottom = -65
+	shade.add_child(image)
+	var close := Button.new()
+	close.text = "FECHAR CARTA"
+	close.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	close.custom_minimum_size = Vector2(0, 52)
+	close.pressed.connect(func(): shade.queue_free())
+	shade.add_child(close)
