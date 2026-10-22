@@ -1,77 +1,81 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cartas — Reinos do Destino</title><style>
-:root{font-family:Georgia,serif;color:#f8ecd4;background:#101b24}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#304758,#101b24 75%)}main{max-width:1150px;margin:auto;padding:24px}h1{color:#efc879;margin:8px 0}h2{font-size:1.1rem;color:#e5c389}p{line-height:1.5}.panel{background:#192936;border:1px solid #79633d;border-radius:14px;padding:16px;margin:14px 0}.flex{display:flex;gap:12px;flex-wrap:wrap}.card{background:linear-gradient(145deg,#fff7e7,#e7d6b7);color:#23232a;border:3px double #b89455;border-radius:12px;padding:12px;min-width:145px;max-width:210px;flex:1;box-shadow:0 4px 12px #0005, inset 0 0 0 3px #fff7e7}.card.red{color:#a62e3c}.card.dead{opacity:.4}.card.selected{outline:4px solid #69bda0}button,select{background:#d3a85b;border:0;border-radius:8px;padding:10px 12px;color:#1b2024;font-weight:bold;cursor:pointer}button:hover{filter:brightness(1.13)}button:focus-visible,.card:focus-visible{outline:3px solid #8dd9ff;outline-offset:3px}button:disabled{opacity:.4;cursor:not-allowed}select{max-width:100%}.status{color:#b9d2da}.small{font-size:.85rem}.log{height:230px;overflow:auto;background:#0b1720;padding:12px;border-radius:8px;font-family:system-ui;font-size:.85rem}#hand .card{cursor:pointer}#hand .card:hover{transform:translateY(-3px)}.bar{height:7px;background:#563b3b;border-radius:6px;overflow:hidden;margin:8px 0}.bar span{display:block;height:100%;background:#60ad87}label{display:inline-block;margin:5px 10px 5px 0}header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.pill{background:#2c4652;padding:6px 12px;border-radius:18px}.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}footer{opacity:.7;margin:24px 0}.hint{color:#f3d99a}#notice{font-weight:bold;color:#f0c76c}@media(max-width:600px){main{padding:10px}.card{min-width:115px;padding:8px}h1{font-size:1.5rem}}.board{background:radial-gradient(ellipse,#326148,#132d25);border:12px ridge #b38a4a;border-radius:26px;box-shadow:inset 0 0 60px #0007,0 18px 40px #0008;padding:18px;margin:18px 0}.board .panel{background:transparent;border:0}.board h2{text-align:center;color:#f5d79c;letter-spacing:.1em}.field{display:flex;align-items:center;justify-content:center;gap:20px;margin:12px 0;color:#f2d08b}.field:before,.field:after{content:"";height:1px;flex:1;background:#c6a45c88}.board .flex{justify-content:center}.playing-card{aspect-ratio:5/7;min-width:105px;max-width:160px;flex:1;background:linear-gradient(145deg,#fff8e5,#dbc5a0);color:#25212a;border:5px double #b68a47;border-radius:12px;box-shadow:0 8px 15px #0007;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:10px 6px;text-align:center;position:relative}.playing-card.red{color:#a62e3c}.playing-card.dead{opacity:.35;filter:grayscale(1)}.playing-card.selected{outline:4px solid #71d9b0;transform:translateY(-8px)}.playing-card .emblem{font-size:3.8rem;line-height:1;display:grid;place-items:center;flex:1;text-shadow:0 3px 2px #0002}.playing-card .corner{position:absolute;top:5px;left:6px;font-weight:bold;font-size:1rem}.playing-card .name{font-size:.78rem;font-weight:bold;line-height:1.15}.playing-card .stats{font:600 .68rem system-ui;background:#d3bd91aa;color:#282422;padding:5px;border-radius:5px;width:100%}.playing-card.back{background:repeating-linear-gradient(45deg,#244361,#244361 8px,#365775 8px,#365775 16px);border-color:#dfc08b;color:#eedaa7;justify-content:center}.playing-card.back .emblem{font-size:2rem}#hand{justify-content:center}#hand .playing-card{max-width:138px;cursor:pointer;transition:transform .15s}#hand .playing-card:hover{transform:translateY(-7px)}#enemyBacks{display:flex;gap:5px;justify-content:center}#enemyBacks .playing-card{width:40px;min-width:40px;max-width:40px;padding:0;border-width:2px;border-radius:5px}#enemyBacks .emblem{font-size:1.2rem}.table-piles{display:flex;justify-content:center;gap:26px;align-items:center}.pile{font:600 .75rem system-ui;text-align:center}.pile .playing-card{width:62px;min-width:62px;height:85px;margin:auto}.pile .emblem{font-size:1.7rem}@media(max-width:600px){.board{padding:6px;border-width:7px}.playing-card{min-width:87px;max-width:110px;padding:6px 3px}.playing-card .emblem{font-size:2.6rem}.playing-card .name{font-size:.65rem}.playing-card .stats{font-size:.58rem}#hand .playing-card{min-width:78px;max-width:100px}}
-/* iPhone: viewport-based, no overflowing cards or invisible actions */
-@media(max-width:700px){
-html,body{height:100%;width:100%;margin:0;overflow:hidden}
-body{background:#101d25}
-main{box-sizing:border-box;width:100%;max-width:none;height:100vh;height:100dvh;padding:calc(env(safe-area-inset-top,0px) + 4px) 7px calc(env(safe-area-inset-bottom,0px) + 5px);display:grid;grid-template-rows:38px 44px minmax(0,1fr) minmax(220px,38%);gap:5px;overflow:hidden}
-header{height:38px;min-height:0;flex-wrap:nowrap;gap:5px;overflow:hidden}
-header>div{min-width:0;flex:1}
-header h1{font-size:clamp(12px,3.6vw,17px);line-height:1.1;margin:0;white-space:normal}
-header .status{font:10px/1.2 system-ui}
-header button{font:700 10px system-ui;padding:7px;white-space:nowrap}
-main>.panel:nth-child(2){padding:5px 8px;margin:0;border-radius:9px;overflow:hidden;min-height:0;font:11px/1.25 system-ui}
-#score{font:11px/1.3 system-ui}#notice{font:700 10px system-ui}
-.board{min-height:0;margin:0;padding:5px;border:6px ridge #b18a50;border-radius:15px;display:grid;grid-template-rows:minmax(0,1fr) 12px 32px 12px minmax(0,1fr);gap:2px;overflow:hidden}
-.board>.panel{min-height:0;min-width:0;margin:0;padding:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;background:none;border:0;overflow:hidden}
-.board h2{font:700 10px/1.1 system-ui;margin:0;letter-spacing:.06em;flex:0 0 auto}
-.board .flex{width:100%;min-height:0;flex:1;gap:5px;display:flex;flex-wrap:nowrap;justify-content:center;align-items:center;overflow:hidden}
-.board .flex>.playing-card{box-sizing:border-box;flex:0 1 31%;width:31%;min-width:0;max-width:115px;height:100%;max-height:126px;min-height:0;aspect-ratio:auto;padding:3px 2px;border-width:3px;border-radius:7px;overflow:hidden}
-.board .playing-card .corner{font:700 10px system-ui;top:2px;left:3px}
-.board .playing-card .emblem{font-size:clamp(20px,6vw,32px);min-height:0;line-height:1}
-.board .playing-card .name{font:700 clamp(9px,2.6vw,12px)/1.05 Georgia,serif;min-height:0}
-.board .playing-card .stats{font:600 clamp(8px,2vw,10px)/1.05 system-ui;padding:2px 0}
-.board .playing-card .bar{height:4px;margin:1px 0;flex:0 0 4px}
-#enemyHand{font:9px/1 system-ui;margin:0;flex:0 0 auto}
-#enemyBacks{display:flex;flex:0 0 17px;height:17px;gap:4px}
-#enemyBacks .playing-card{width:14px;min-width:14px;max-width:14px;height:17px;min-height:17px;flex:0 0 14px;border-width:1px;border-radius:3px;padding:0}
-#enemyBacks .playing-card .emblem{font-size:9px}
-.field{font:9px/1 system-ui;white-space:nowrap;margin:0;gap:4px;min-height:0}
-.table-piles{gap:20px;min-height:0;overflow:hidden}
-.pile{display:flex;gap:5px;align-items:center;font:9px system-ui}
-.pile .playing-card{width:22px;min-width:22px;max-width:22px;height:28px;min-height:28px;flex:0 0 22px;aspect-ratio:auto;padding:0;border-width:1px;border-radius:3px}
-.pile .playing-card .emblem{font-size:13px}
-#handPanel{min-height:0;min-width:0;margin:0;padding:6px;border-radius:10px;display:grid;grid-template-rows:16px minmax(0,1fr) 14px 77px;gap:4px;overflow:hidden}
-#handPanel>h2{font:700 12px/1 system-ui;margin:0}
-#hand{min-width:0;min-height:0;display:flex;flex-wrap:nowrap;justify-content:flex-start;align-items:stretch;gap:5px;overflow-x:auto;overflow-y:hidden;padding:2px 2px 4px}
-#hand>.playing-card{box-sizing:border-box;flex:0 0 clamp(57px,17.5vw,82px);width:clamp(57px,17.5vw,82px);min-width:57px;max-width:82px;height:100%;min-height:0;max-height:none;aspect-ratio:auto;border-width:2px;border-radius:6px;padding:3px 2px;overflow:hidden}
-#hand .playing-card .corner{font:700 9px system-ui;top:2px;left:3px}
-#hand .playing-card .emblem{font-size:clamp(19px,6vw,29px);min-height:0}
-#hand .playing-card .name{font:700 9px/1 Georgia,serif}
-#hand .playing-card .stats{font:600 8px/1 system-ui;padding:2px 0}
-#chosen{font:10px/1 system-ui;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;margin:0}
-#handPanel .controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:36px 36px;gap:5px;min-height:0}
-#handPanel .controls label{font:10px/1 system-ui;grid-column:span 2;min-width:0;margin:0}
-#handPanel .controls select{box-sizing:border-box;width:100%;height:24px;font:11px system-ui;padding:1px 3px;margin-top:1px}
-#handPanel .controls button{font:700 10px/1.1 system-ui;min-width:0;min-height:0;height:36px;padding:2px;border-radius:6px;white-space:normal}
-#handPanel>.small,#logPanel,main>footer{display:none!important}
-}
-@media(max-width:700px) and (max-height:670px){
-main{grid-template-rows:32px 38px minmax(0,1fr) minmax(196px,39%);gap:3px}
-header{height:32px}
-.board{grid-template-rows:minmax(0,1fr) 10px 26px 10px minmax(0,1fr);padding:3px}
-.board .flex>.playing-card{max-height:108px}
-#enemyHand{display:none}
-#enemyBacks{flex-basis:13px;height:13px}
-#enemyBacks .playing-card{height:13px;min-height:13px}
-#handPanel{grid-template-rows:13px minmax(0,1fr) 12px 70px;gap:3px}
-#handPanel .controls{grid-template-rows:32px 32px;gap:3px}
-#handPanel .controls button{height:32px}
-}
-
-.official-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:6px;pointer-events:none;background:#172722}
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Cartas — Reinos do Destino</title><style>
+:root{font-family:Georgia,serif;color:#f8ecd4;background:#101b24}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:radial-gradient(circle at top,#304758,#101b24 75%);min-height:100dvh}
+main{max-width:600px;margin:auto;padding:calc(env(safe-area-inset-top,0px) + 8px) 8px 0}
+h1{color:#efc879;margin:0;font-size:1.05rem;letter-spacing:.04em}
+h2{font:700 .8rem system-ui;color:#e5c389;margin:4px 0;text-align:center;letter-spacing:.08em;text-transform:uppercase}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+button,select{background:#d3a85b;border:0;border-radius:8px;padding:10px 12px;color:#1b2024;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.4;cursor:not-allowed}
+button:active:not(:disabled){transform:scale(.96)}
+.panel{background:#192936;border:1px solid #79633d;border-radius:14px;padding:10px;margin:10px 0}
+#score{font:600 .9rem system-ui}#notice{font:700 .85rem system-ui;color:#f0c76c;margin-top:2px}
+.board{background:radial-gradient(ellipse,#326148,#132d25);border:8px ridge #b38a4a;border-radius:22px;box-shadow:inset 0 0 60px #0007,0 14px 30px #0008;padding:8px;margin:10px 0}
+.row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0}
+.field{text-align:center;font:600 .8rem system-ui;color:#f2d08b;padding:6px 0;border-top:1px solid #c6a45c88;border-bottom:1px solid #c6a45c88;margin:10px 0 6px}
+#ticker{min-height:2.6em;text-align:center;font:700 .88rem/1.25 system-ui;color:#fff;background:#0008;border-radius:8px;padding:7px 8px;margin:6px 0 10px;animation:tick .4s ease}
+@keyframes tick{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.playing-card{position:relative;aspect-ratio:5/7;background:linear-gradient(145deg,#fff8e5,#dbc5a0);color:#25212a;border:3px double #b68a47;border-radius:10px;box-shadow:0 6px 12px #0007;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px 3px;text-align:center;overflow:visible;transition:transform .2s,outline-color .2s;cursor:pointer}
+.playing-card.red{color:#a62e3c}
+.playing-card.dead{opacity:.35;filter:grayscale(1);pointer-events:none}
+.playing-card .corner{position:absolute;top:4px;left:6px;font-weight:bold;font-size:.9rem}
+.playing-card .emblem{font-size:2.6rem;line-height:1;display:grid;place-items:center;flex:1}
+.playing-card .name{font-size:.75rem;font-weight:bold;line-height:1.1}
+.playing-card .stats{position:relative;z-index:1;font:600 11px/1.25 system-ui;background:#112820ed;color:#fff;padding:3px 2px;border-radius:0 0 7px 7px;width:100%;margin-top:auto}
+.bar{position:relative;z-index:1;height:6px;background:#563b3b;border-radius:6px;overflow:hidden;width:92%;margin:2px auto}
+.bar span{display:block;height:100%;background:#60ad87;transition:width .5s}
+.official-art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:7px;pointer-events:none;background:#172722}
 .playing-card:has(.official-art) .emblem,.playing-card:has(.official-art) .name,.playing-card:has(.official-art) .corner{visibility:hidden}
-.playing-card:has(.official-art) .stats,.playing-card:has(.official-art) .bar{position:relative;z-index:1;background:#112820ed;color:#fff}
+.hero[data-side="0"]{--dir:-1}.hero[data-side="1"]{--dir:1}
+.hero.actor{outline:4px solid #71d9b0;transform:translateY(-4px)}
+.hero.target{outline:4px solid #ff6b5e}
+.hero.actor.target{outline-color:#f0c76c}
+#hand{display:flex;gap:8px;overflow-x:auto;padding:14px 4px 8px;scroll-snap-type:x proximity}
+#hand .playing-card{flex:0 0 30vw;max-width:140px;scroll-snap-align:start}
+#hand .playing-card.selected{outline:4px solid #71d9b0;transform:translateY(-12px)}
+#hand .playing-card.deal{animation:deal .45s ease}
+@keyframes deal{from{opacity:0;transform:translateY(40px) rotate(8deg)}to{opacity:1;transform:none}}
+#info{font:13px/1.4 system-ui}#info p{margin:0 0 7px}#info small{color:#b9d2da;display:block}#info .prev{color:#ffd98a;font-weight:700}
+.log{height:150px;overflow:auto;background:#0b1720;padding:10px;border-radius:8px;font:.8rem system-ui}
+#dock{position:sticky;bottom:0;z-index:20;background:#101b24f5;border-top:1px solid #79633d;padding:8px 8px calc(env(safe-area-inset-bottom,0px) + 8px);margin:0 -8px;display:grid;gap:6px}
+#dock .sel{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+#dock label{font:11px system-ui;display:block}
+#dock select{width:100%;height:36px;font:13px system-ui;margin-top:2px;padding:2px 6px}
+#dock .btns{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+#dock button{height:46px;font:700 13px/1.1 system-ui;padding:2px}
+.fx-lunge{animation:lunge .55s ease;z-index:6}
+@keyframes lunge{0%{transform:none}40%{transform:translateY(calc(var(--dir) * 40px)) scale(1.1)}100%{transform:none}}
+.fx-hit{animation:hit .5s ease}
+@keyframes hit{0%,100%{transform:none;filter:none}15%{transform:translateX(-8px);filter:brightness(1.5) saturate(3) hue-rotate(-30deg)}35%{transform:translateX(8px)}55%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.fx-heal{animation:gHeal .9s ease}.fx-shield{animation:gShield .9s ease}.fx-energy{animation:gEnergy .9s ease}
+@keyframes gHeal{50%{box-shadow:0 0 26px 10px #6fe3a6}}
+@keyframes gShield{50%{box-shadow:0 0 26px 10px #6cb8ff}}
+@keyframes gEnergy{50%{box-shadow:0 0 26px 10px #ffd35c}}
+.float{position:absolute;left:50%;top:35%;font:800 24px system-ui;text-shadow:0 2px 4px #000,0 0 6px #000;animation:up 1s ease forwards;z-index:9;pointer-events:none;white-space:nowrap}
+.float.hit{color:#ff5a4d}.float.heal{color:#6fe3a6}.float.shield{color:#7cc4ff}.float.energy{color:#ffd35c}
+@keyframes up{0%{opacity:0;transform:translate(-50%,10px) scale(.6)}20%{opacity:1;transform:translate(-50%,0) scale(1.2)}100%{opacity:0;transform:translate(-50%,-50px)}}
+#banner{position:fixed;left:0;right:0;top:38%;text-align:center;font:800 2rem Georgia,serif;color:#ffd98a;text-shadow:0 3px 8px #000;opacity:0;pointer-events:none;z-index:50}
+#banner.show{animation:ban 1.4s ease}
+@keyframes ban{0%{opacity:0;transform:scale(.6)}20%{opacity:1;transform:scale(1.1)}80%{opacity:1;transform:scale(1)}100%{opacity:0}}
+@media(min-width:600px){#hand .playing-card{flex-basis:130px}}
 </style></head>
-<body><main><header><div><h1>⚔ CARTAS — REINOS DO DESTINO</h1><span class="status">Tabuleiro corrigido • Versão 1.5</span></div><button id="reset">Nova partida</button></header>
+<body><main>
+<header><h1>⚔ CARTAS — REINOS DO DESTINO</h1><button id="reset">Nova partida</button></header>
 <div class="panel"><div id="score"></div><div id="notice"></div></div>
-<div class="board"><section class="panel"><h2>⚔ Reino adversário ⚔</h2><div id="enemy" class="flex"></div><p id="enemyHand" class="status" style="text-align:center"></p><div id="enemyBacks"></div></section><div class="field">⚜ CAMPO DE BATALHA ⚜</div><div class="table-piles"><div class="pile"><div class="playing-card back"><div class="emblem">✦</div></div><span id="deckCount"></span></div><div class="pile"><div class="playing-card"><div class="emblem">♜</div></div><span id="discardCount"></span></div></div><div class="field">⚜ SEUS GUERREIROS ⚜</div><section class="panel"><h2>Seu reino</h2><div id="player" class="flex"></div></section></div>
-<section class="panel" id="handPanel"><h2>Sua mão — escolha uma carta</h2><div id="hand" class="flex"></div><p id="chosen" class="hint">Nenhuma carta selecionada.</p><div class="controls"><label>Herói <select id="actor"></select></label><label>Alvo <select id="target"></select></label><button id="play">Jogar carta</button><button id="attack">Atacar</button><button id="ace">Ativar Ás do herói</button><button id="end">Encerrar turno</button></div><p class="small status">Cada turno permite 1 carta, 1 Ás e 1 ataque. Para cartas de Copas/Ouros, escolha o herói que as utiliza e o alvo aliado; para ataques, escolha um inimigo.</p></section>
-<section class="panel" id="logPanel"><h2>Registro auditável</h2><div id="log" class="log" aria-live="polite"></div></section><footer>Sem serviços externos, sem duplicação de cartas. As ilustrações finais poderão substituir os cartões provisórios.</footer></main>
+<div class="board"><h2>⚔ Reino adversário ⚔</h2><div id="enemy" class="row"></div><div class="field" id="field"></div><div id="ticker"></div><h2>⚜ Seus guerreiros ⚜</h2><div id="player" class="row"></div></div>
+<section class="panel" id="info"></section>
+<section class="panel"><h2>Sua mão — toque para escolher</h2><div id="hand"></div></section>
+<section class="panel"><h2>Registro</h2><div id="log" class="log" aria-live="polite"></div></section>
+<div id="dock"><div class="sel"><label>Herói (atacante)<select id="actor"></select></label><label>Alvo<select id="target"></select></label></div><div class="btns"><button id="play">Jogar</button><button id="attack">Atacar</button><button id="ace">Ás ⚡2</button><button id="end">Encerrar</button></div></div>
+<div id="banner"></div>
+</main>
 <script src="card-art.js"></script><script>
 "use strict";
 const SUITS=["♥","♦","♠","♣"],NAMES={"♥":"Copas","♦":"Ouros","♠":"Espadas","♣":"Paus"};
+const ACE={"♥":"Ás de Copas (⚡2): cura 3 PV e +1 escudo em um aliado.","♦":"Ás de Ouros (⚡2): ganha +3 de energia.","♠":"Ás de Espadas (⚡2): compra 2 cartas e descarta 1.","♣":"Ás de Paus (⚡2): +2 ATQ no próximo ataque."};
+const PASSIVE={"K♥":"Guarda: reduz em 1 o primeiro dano que seu reino recebe por turno.","K♣":"+1 de dano contra alvos com PV cheio.","J♠":"+1 de dano contra alvos feridos.","J♣":"Fúria: +2 de dano quando está com 4 PV ou menos.","Q♦":"+1 escudo extra ao usar cartas de Ouros."};
 const roster=[
 {name:"Rei de Espadas",s:"♠",rank:"K",hp:14,atk:4,def:3},
 {name:"Rainha de Copas",s:"♥",rank:"Q",hp:11,atk:2,def:2},
@@ -81,75 +85,100 @@ const roster=[
 {name:"Valete de Copas",s:"♥",rank:"J",hp:9,atk:3,def:1}
 ];
 const $=id=>document.getElementById(id);
-let g;
+let g,actorId=null,targetId=null;const fx=[];
 const power=n=>n<=4?1:n<=7?2:3,cost=n=>n<=4?1:n<=7?2:3;
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function log(t){g.history.push(t);$("log").innerHTML=g.history.slice(-80).map(x=>"<div>"+x+"</div>").join("");$("log").scrollTop=$("log").scrollHeight}
+function addFx(id,type,val){fx.push({id,type,val})}
+function banner(t){const b=$("banner");b.textContent=t;b.classList.remove("show");void b.offsetWidth;b.classList.add("show")}
+function log(t){g.history.push(t);$("log").innerHTML=g.history.slice(-80).map(x=>"<div>"+x+"</div>").join("");$("log").scrollTop=$("log").scrollHeight;const k=$("ticker"),n=k.cloneNode(false);n.textContent=t;k.replaceWith(n)}
 function alive(side){return g.heroes.filter(h=>h.side===side&&h.hp>0)}
 function hero(id){return g.heroes.find(h=>h.id===id)}
 function start(){let deck=[];for(const s of SUITS)for(let n=2;n<=10;n++)deck.push({id:s+n,s,n});deck.push({id:"JOKER-RED",joker:"red"},{id:"JOKER-BLUE",joker:"blue"});shuffle(deck);
-g={deck,discard:[],reshuffles:0,heroes:roster.map((h,i)=>({...h,id:i,side:i<3?0:1,max:h.hp,shield:0})),hands:[[],[]],energy:[3,3],glory:[0,0],turn:0,round:1,usedCard:false,usedAce:false,usedAttack:false,scoredDamage:false,selected:null,history:[],over:false,aceUsed:[new Set(),new Set()]};
+fx.length=0;actorId=null;targetId=null;
+g={uid:Math.random(),seen:new Set(),deck,discard:[],reshuffles:0,heroes:roster.map((h,i)=>({...h,id:i,side:i<3?0:1,max:h.hp,shield:0})),hands:[[],[]],energy:[3,3],glory:[0,0],turn:0,round:1,usedCard:false,usedAce:false,usedAttack:false,scoredDamage:false,selected:null,history:[],over:false,aceUsed:[new Set(),new Set()]};
 for(let i=0;i<3;i++){draw(0);draw(1)}log("Partida iniciada. Baralho único com 38 cartas.");beginTurn();render()}
 function draw(side){if(!g.deck.length){if(g.reshuffles===0&&g.discard.length){g.deck=shuffle(g.discard.splice(0));g.reshuffles++;log("Descarte reembaralhado uma única vez.")}else{return false}}g.hands[side].push(g.deck.pop());return true}
-function beginTurn(){if(g.over)return;g.usedCard=false;g.usedAce=false;g.usedAttack=false;g.scoredDamage=false;g.selected=null;g.aceUsed[g.turn]=new Set();for(const h of alive(g.turn))h.shield=0;g.energy[g.turn]=Math.min(6,g.energy[g.turn]+2);if(!(g.turn===0&&g.round===1))draw(g.turn);log((g.turn?"Adversário":"Você")+" começa o turno "+g.round+" com "+g.energy[g.turn]+" energia.");render()}
+function beginTurn(){if(g.over)return;g.usedCard=false;g.usedAce=false;g.usedAttack=false;g.scoredDamage=false;g.selected=null;g.aceUsed[g.turn]=new Set();for(const h of alive(g.turn))h.shield=0;g.energy[g.turn]=Math.min(6,g.energy[g.turn]+2);if(!(g.turn===0&&g.round===1))draw(g.turn);log((g.turn?"Adversário":"Você")+" começa o turno "+g.round+" com "+g.energy[g.turn]+" energia.");banner(g.turn?"Turno adversário":"Seu turno");render()}
 function cardText(c){return c.joker?(c.joker==="red"?"🃏 Coringa Vermelho":"🃏 Coringa Azul"):c.n+" "+c.s}
+function cardName(c){return c.joker?(c.joker==="red"?"Coringa Vermelho":"Coringa Azul"):c.n+" de "+NAMES[c.s]}
+function cardEffect(c){if(c.joker==="red")return"Custo ⚡3. Copia 8 de Espadas (ataque forte em inimigo) ou 8 de Copas (cura 4 em aliado).";if(c.joker==="blue")return"Custo ⚡3. +3 escudos no herói escolhido.";
+const p=power(c.n),k=" Potência "+p+" · custo ⚡"+cost(c.n)+" · +1 se for o naipe do herói.";
+return{"♥":"Copas: cura um aliado em 1 + potência PV.","♦":"Ouros: ganha energia = potência e dá 1 + potência de escudo a um aliado.","♠":"Espadas: ataque com +potência que ignora 1 de DEF do inimigo.","♣":"Paus: ataque com +potência e dá +1 escudo ao atacante."}[c.s]+k}
+function heroAbil(h){return"⚔ ATQ "+h.atk+" · 🛡 DEF "+h.def+" (reduz cada golpe recebido)<small>"+ACE[h.s]+"</small>"+(PASSIVE[h.rank+h.s]?"<small>Passiva — "+PASSIVE[h.rank+h.s]+"</small>":"")}
 function spend(side,amount){if(g.energy[side]<amount)return false;g.energy[side]-=amount;return true}
-function shield(h,n){h.shield=Math.min(4,h.shield+n)}
-function heal(h,n){let v=h.hp;h.hp=Math.min(h.max,h.hp+n);return h.hp-v}
-function damage(attacker,target,bonus=0,ignore=0){let d=Math.max(1,attacker.atk+bonus-Math.max(0,target.def-ignore));if(attacker.rank==="K"&&attacker.s==="♣"&&target.hp===target.max)d++;
-if(attacker.rank==="J"&&attacker.s==="♠"&&target.hp<target.max)d++;
-if(attacker.rank==="J"&&attacker.s==="♣"&&attacker.hp<=4)d+=2;
+function shield(h,n){let v=h.shield;h.shield=Math.min(4,h.shield+n);if(h.shield>v)addFx(h.id,"shield","🛡+"+(h.shield-v))}
+function heal(h,n){let v=h.hp;h.hp=Math.min(h.max,h.hp+n);if(h.hp>v)addFx(h.id,"heal","+"+(h.hp-v));return h.hp-v}
+function est(a,t,bonus,ignore){let d=Math.max(1,a.atk+bonus-Math.max(0,t.def-ignore));if(a.rank==="K"&&a.s==="♣"&&t.hp===t.max)d++;if(a.rank==="J"&&a.s==="♠"&&t.hp<t.max)d++;if(a.rank==="J"&&a.s==="♣"&&a.hp<=4)d+=2;return d}
+function damage(attacker,target,bonus=0,ignore=0){let d=est(attacker,target,bonus,ignore);addFx(attacker.id,"lunge");
 let guard=alive(attacker.side===0?1:0).find(x=>x.rank==="K"&&x.s==="♥");
 if(guard&&!guard.guardUsed){d=Math.max(0,d-1);guard.guardUsed=true}
 let absorbed=Math.min(d,target.shield);target.shield-=absorbed;d-=absorbed;let actual=Math.min(d,target.hp);target.hp-=actual;
+if(absorbed)addFx(target.id,"shield","🛡-"+absorbed);if(actual)addFx(target.id,"hit","-"+actual);
 let pg=actual>=3&&!g.scoredDamage?1:0;if(pg)g.scoredDamage=true;if(target.hp===0)pg+=target.rank==="K"?3:2;g.glory[attacker.side]+=pg;
 log(attacker.name+" ataca "+target.name+": "+actual+" PV, "+absorbed+" escudo, +"+pg+" PG.");
 checkWin();return actual}
-function checkWin(){if(g.glory[0]>=12||g.glory[1]>=12||!alive(0).length||!alive(1).length){g.over=true;let winner=g.glory[0]>=12||!alive(1).length?0:1;log("FIM: "+(winner===0?"Vitória do seu reino!":"Vitória do adversário."))}}
+function checkWin(){if(g.glory[0]>=12||g.glory[1]>=12||!alive(0).length||!alive(1).length){g.over=true;let winner=g.glory[0]>=12||!alive(1).length?0:1;log("FIM: "+(winner===0?"Vitória do seu reino!":"Vitória do adversário."));banner(winner===0?"VITÓRIA!":"DERROTA")}}
 function applyCard(side,c,a,t){if(g.usedCard||!a||a.hp<=0||a.side!==side||!t||t.hp<=0)return false;let cst=c.joker?3:cost(c.n);if(g.energy[side]<cst)return false;
 if(!c.joker&&(c.s==="♠"||c.s==="♣")){if(!t||t.side===side||g.usedAttack)return false}
 if(!c.joker&&(c.s==="♥"||c.s==="♦")&&(!t||t.side!==side))return false;
-spend(side,cst);let bonus=0;
+spend(side,cst);
 if(c.joker==="red"){if(t.side!==side&&!g.usedAttack){damage(a,t,3,1);g.usedAttack=true;log("Coringa Vermelho copia 8 de Espadas.")}else if(t.side===side){heal(t,4);log("Coringa Vermelho copia 8 de Copas e cura "+t.name+".")}else{shield(a,3);log("Coringa Vermelho concede proteção.")}}
 else if(c.joker==="blue"){shield(a,3);log("Coringa Azul: efeito provisório de proteção (+3 escudos). A transformação de naipe será implementada na próxima atualização.")}
 else {let p=power(c.n)+(a.s===c.s?1:0);if(c.s==="♥"){let n=heal(t,1+p);log(a.name+" usa "+cardText(c)+" e cura "+t.name+" em "+n+" PV.")}
-if(c.s==="♦"){g.energy[side]=Math.min(6,g.energy[side]+p);shield(t,1+p+(a.rank==="Q"&&a.s==="♦"?1:0));log(a.name+" usa "+cardText(c)+" e concede recursos e escudos a "+t.name+".")}
+if(c.s==="♦"){g.energy[side]=Math.min(6,g.energy[side]+p);addFx(a.id,"energy","⚡+"+p);shield(t,1+p+(a.rank==="Q"&&a.s==="♦"?1:0));log(a.name+" usa "+cardText(c)+" e concede recursos e escudos a "+t.name+".")}
 if(c.s==="♠"||c.s==="♣"){if(c.s==="♣")shield(a,1);damage(a,t,p,c.s==="♠"?1:0);g.usedAttack=true;}}
 g.hands[side]=g.hands[side].filter(x=>x.id!==c.id);g.discard.push(c);g.usedCard=true;g.selected=null;checkWin();render();return true}
 function useAce(side,a,t){if(g.usedAce||!a||a.hp<=0||a.side!==side||g.energy[side]<2)return false;if(a.s==="♥"&&t&&t.side!==side)return false;spend(side,2);g.usedAce=true;
 if(a.s==="♥"){if(!t||t.side!==side)t=a;heal(t,3);shield(t,1);log("Ás de Copas: cura e escudo para "+t.name)}
-if(a.s==="♦"){g.energy[side]=Math.min(6,g.energy[side]+3);log("Ás de Ouros: +3 energia.")}
-if(a.s==="♠"){draw(side);draw(side);if(g.hands[side].length){let discarded=g.hands[side].pop();g.discard.push(discarded);log("Ás de Espadas: compra 2 e descarta "+cardText(discarded)+" (descarte automático nesta versão).")}}
-if(a.s==="♣"){a.aceBonus=2;log("Ás de Paus: +2 ATQ no próximo ataque deste turno.")}
+if(a.s==="♦"){g.energy[side]=Math.min(6,g.energy[side]+3);addFx(a.id,"energy","⚡+3");log("Ás de Ouros: +3 energia.")}
+if(a.s==="♠"){draw(side);draw(side);addFx(a.id,"energy","+2 cartas");if(g.hands[side].length){let discarded=g.hands[side].pop();g.discard.push(discarded);log("Ás de Espadas: compra 2 e descarta "+cardText(discarded)+" (descarte automático nesta versão).")}}
+if(a.s==="♣"){a.aceBonus=2;addFx(a.id,"energy","ATQ +2");log("Ás de Paus: +2 ATQ no próximo ataque deste turno.")}
 render();return true}
 function basic(side,a,t){if(g.usedAttack||!a||!t||a.side!==side||t.side===side||a.hp<=0||t.hp<=0)return false;damage(a,t,a.aceBonus||0);a.aceBonus=0;g.usedAttack=true;render();return true}
 function endTurn(){if(g.over)return;for(const h of g.heroes)h.guardUsed=false;for(const h of alive(g.turn))h.aceBonus=0;
 while(g.hands[g.turn].length>5){let c=g.hands[g.turn].pop();g.discard.push(c);log("Limite de mão: "+cardText(c)+" descartada.")}
 if(g.turn===1&&g.round===5){for(let side=0;side<2;side++)if(alive(side).length===3){g.glory[side]+=2;log((side?"Adversário":"Você")+" recebe +2 PG de sobrevivência.")}checkWin()}
-if(g.over){render();return}if(g.turn===1)g.round++;g.turn=1-g.turn;beginTurn();if(g.turn===1)enemyTurn()}
-function enemyTurn(){if(g.over)return;let us=alive(1),them=alive(0);if(!us.length||!them.length)return;
+if(g.over){render();return}if(g.turn===1)g.round++;g.turn=1-g.turn;beginTurn();if(g.turn===1){const id=g.uid;setTimeout(()=>{if(g.uid===id)enemyTurn()},1300)}}
+function enemyTurn(){if(g.over||g.turn!==1)return;const id=g.uid,later=(f,ms)=>setTimeout(()=>{if(g.uid===id&&!g.over&&g.turn===1)f()},ms);
+let us=alive(1),them=alive(0);if(!us.length||!them.length)return;
 let attacker=us.find(x=>x.rank==="K")||us[0],target=them.slice().sort((a,b)=>a.hp-b.hp)[0];
 let cards=g.hands[1];let offensive=cards.find(c=>!c.joker&&(c.s==="♠"||c.s==="♣")&&cost(c.n)<=g.energy[1]);let support=cards.find(c=>!c.joker&&c.s==="♦"&&cost(c.n)<=g.energy[1]);
 if(offensive)applyCard(1,offensive,attacker,target);else if(support)applyCard(1,support,attacker,attacker);
-if(!g.usedAttack&&!g.over){target=alive(0).slice().sort((a,b)=>a.hp-b.hp)[0];if(target)basic(1,attacker,target);}
-if(!g.over)endTurn();else render()}
-function artwork(key){const path=window.CARD_ART[key];return path?'<img class="official-art" src="'+path+'" alt="'+key+'" draggable="false">':""}
-function heroMarkup(h){let red=h.s==="♥"||h.s==="♦";let emblem=h.rank==="K"?"♚":h.rank==="Q"?"♛":"♞";return '<div class="playing-card '+(red?"red ":"")+(h.hp<=0?"dead":"")+'">'+artwork(h.s+h.rank)+'<span class="corner">'+h.rank+' '+h.s+'</span><div class="emblem">'+emblem+'</div><div class="name">'+h.name+'</div><div class="bar" style="width:95%"><span style="width:'+(h.hp/h.max*100)+'%"></span></div><div class="stats">♥ '+h.hp+'/'+h.max+' · 🛡 '+h.shield+'<br>⚔ '+h.atk+' · DEF '+h.def+'</div></div>'}
-function cardMarkup(c,i){let red=c.s==="♥"||c.s==="♦";let name=c.joker?(c.joker==="red"?"Coringa Vermelho":"Coringa Azul"):c.n+" de "+NAMES[c.s];return '<div class="playing-card '+(red?"red ":"")+(g.selected===c.id?"selected":"")+'" data-index="'+i+'" role="button" tabindex="0">'+artwork(c.joker?'joker-'+c.joker:c.s+c.n)+'<span class="corner">'+(c.n||"★")+' '+(c.s||"✦")+'</span><div class="emblem">'+(c.joker?"🃏":c.s)+'</div><div class="name">'+name+'</div><div class="stats">'+(c.joker?"Poder especial":"Potência "+power(c.n))+' · ⚡ '+(c.joker?3:cost(c.n))+'</div></div>'}
-function render(){if(!g)return;$("score").innerHTML="<strong>Rodada "+g.round+"</strong> · Você "+g.glory[0]+" PG / "+g.energy[0]+" ⚡ · Adversário "+g.glory[1]+" PG / "+g.energy[1]+" ⚡ · Baralho "+g.deck.length+" · Descarte "+g.discard.length;
-$("notice").textContent=g.over?"PARTIDA ENCERRADA":g.turn===0?"Seu turno":"Turno adversário";
+later(()=>{if(!g.usedAttack){let t=alive(0).slice().sort((a,b)=>a.hp-b.hp)[0];if(t)basic(1,attacker.hp>0?attacker:(alive(1)[0]||attacker),t)}later(endTurn,1000)},1000)}
+function artwork(key){const path=window.CARD_ART&&window.CARD_ART[key];return path?'<img class="official-art" src="'+path+'" alt="'+key+'" draggable="false">':""}
+function heroMarkup(h){let red=h.s==="♥"||h.s==="♦";let emblem=h.rank==="K"?"♚":h.rank==="Q"?"♛":"♞";
+return '<div class="playing-card hero '+(red?"red ":"")+(h.hp<=0?"dead ":"")+(h.id===actorId?"actor ":"")+(h.id===targetId?"target":"")+'" data-hid="'+h.id+'" data-side="'+h.side+'">'+artwork(h.s+h.rank)+'<span class="corner">'+h.rank+' '+h.s+'</span><div class="emblem">'+emblem+'</div><div class="name">'+h.name+'</div><div class="bar"><span style="width:'+(h.hp/h.max*100)+'%"></span></div><div class="stats">♥ '+h.hp+'/'+h.max+' · 🛡 '+h.shield+'<br>⚔ '+h.atk+' · DEF '+h.def+'</div></div>'}
+function cardMarkup(c,i){let red=c.s==="♥"||c.s==="♦";let fresh=!g.seen.has(c.id);return '<div class="playing-card '+(red?"red ":"")+(g.selected===c.id?"selected ":"")+(fresh?"deal":"")+'" data-index="'+i+'" role="button" tabindex="0">'+artwork(c.joker?'joker-'+c.joker:c.s+c.n)+'<span class="corner">'+(c.n||"★")+' '+(c.s||"✦")+'</span><div class="emblem">'+(c.joker?"🃏":c.s)+'</div><div class="name">'+cardName(c)+'</div><div class="stats">'+(c.joker?"Poder especial":"Potência "+power(c.n))+' · ⚡ '+(c.joker?3:cost(c.n))+'</div></div>'}
+function ensureSel(){let al=alive(0),en=alive(1);if(!al.some(h=>h.id===actorId))actorId=al[0]?al[0].id:null;if(![...en,...al].some(h=>h.id===targetId))targetId=en[0]?en[0].id:(al[0]?al[0].id:null)}
+function pickHero(id){let h=hero(id);if(!h||h.hp<=0)return;if(h.side===1)targetId=id;else if(actorId===id)targetId=id;else actorId=id;render()}
+function info(){const a=hero(actorId),t=hero(targetId),c=g.selected&&g.hands[0].find(x=>x.id===g.selected);let h="";
+if(c)h+='<p><b>🃏 '+cardName(c)+'</b><small>'+cardEffect(c)+'</small></p>';
+if(a)h+='<p><b>🟢 '+a.name+' (atacante)</b><br>'+heroAbil(a)+'</p>';
+if(t&&t.id!==(a&&a.id))h+='<p><b>'+(t.side===0?'🟢':'🔴')+' '+t.name+' (alvo)</b><br>'+heroAbil(t)+'</p>';
+if(a&&t&&t.side===1){h+='<p class="prev">⚔ Atacar: ≈ '+est(a,t,a.aceBonus||0,0)+' de dano'+(t.shield?' ('+t.shield+' absorvido pelo escudo)':'');
+if(c&&!c.joker&&(c.s==="♠"||c.s==="♣"))h+=' · com a carta: ≈ '+est(a,t,power(c.n)+(a.s===c.s?1:0),c.s==="♠"?1:0);h+='</p>'}
+$("info").innerHTML=h||"Toque numa carta ou num herói para ver as habilidades."}
+function flush(){while(fx.length){const f=fx.shift(),el=document.querySelector('[data-hid="'+f.id+'"]');if(!el)continue;const cls="fx-"+f.type;el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls);setTimeout(()=>el.classList.remove(cls),900);
+if(f.val){const s=document.createElement("span");s.className="float "+f.type;s.textContent=f.val;el.appendChild(s);setTimeout(()=>s.remove(),1000)}}}
+function render(){if(!g)return;ensureSel();
+$("score").innerHTML="<strong>Rodada "+g.round+"</strong> · Você "+g.glory[0]+" PG / "+g.energy[0]+" ⚡ · Rival "+g.glory[1]+" PG / "+g.energy[1]+" ⚡";
+$("notice").textContent=g.over?"PARTIDA ENCERRADA":g.turn===0?"Seu turno":"Turno adversário…";
+$("field").textContent="⚜ Baralho "+g.deck.length+" • Descarte "+g.discard.length+" • Mão rival "+g.hands[1].length+" ⚜";
 for(const side of [0,1]){$(side?"enemy":"player").innerHTML=g.heroes.filter(h=>h.side===side).map(heroMarkup).join("")}
-$("enemyHand").textContent="Cartas adversárias ocultas: "+g.hands[1].length; $("enemyBacks").innerHTML=g.hands[1].map(()=>'<div class="playing-card back"><div class="emblem">✦</div></div>').join("");$("deckCount").textContent="Baralho: "+g.deck.length;$("discardCount").textContent="Descarte: "+g.discard.length;
-$("hand").innerHTML=g.hands[0].map(cardMarkup).join("");
+document.querySelectorAll(".hero").forEach(el=>{el.onclick=()=>pickHero(Number(el.dataset.hid))});
+$("hand").innerHTML=g.hands[0].map(cardMarkup).join("");g.hands[0].forEach(c=>g.seen.add(c.id));
 document.querySelectorAll("#hand .playing-card").forEach(el=>{const choose=()=>{g.selected=g.hands[0][Number(el.dataset.index)].id;render()};el.onclick=choose;el.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();choose()}}});
-const actors=alive(0),targets=[...alive(1),...alive(0)];let a=$("actor").value,t=$("target").value;
+const actors=alive(0),targets=[...alive(1),...alive(0)];
 $("actor").innerHTML=actors.map(h=>'<option value="'+h.id+'">'+h.name+'</option>').join("");
 $("target").innerHTML=targets.map(h=>'<option value="'+h.id+'">'+h.name+(h.side===0?" (aliado)":" (inimigo)")+'</option>').join("");
-if(actors.some(h=>String(h.id)===a))$("actor").value=a;if(targets.some(h=>String(h.id)===t))$("target").value=t;
-$("chosen").textContent=g.selected?"Selecionada: "+cardText(g.hands[0].find(c=>c.id===g.selected)):"Nenhuma carta selecionada.";
-const active=g.turn===0&&!g.over;$("play").disabled=!active||g.usedCard||!g.selected;$("attack").disabled=!active||g.usedAttack;$("ace").disabled=!active||g.usedAce;$("end").disabled=!active}
-$("play").onclick=()=>{let c=g.hands[0].find(c=>c.id===g.selected);if(!c||!applyCard(0,c,hero(Number($("actor").value)),hero(Number($("target").value))))alert("Jogada inválida: verifique Energia, alvo e limite de ações.")};
-$("attack").onclick=()=>{if(!basic(0,hero(Number($("actor").value)),hero(Number($("target").value))))alert("Selecione um atacante aliado e um alvo inimigo.")};
-$("ace").onclick=()=>{if(!useAce(0,hero(Number($("actor").value)),hero(Number($("target").value))))alert("Ás indisponível: verifique Energia e limite de uso.")};
+if(actorId!==null)$("actor").value=actorId;if(targetId!==null)$("target").value=targetId;
+info();
+const active=g.turn===0&&!g.over;$("play").disabled=!active||g.usedCard||!g.selected;$("attack").disabled=!active||g.usedAttack;$("ace").disabled=!active||g.usedAce;$("end").disabled=!active;
+flush()}
+$("actor").onchange=()=>{actorId=Number($("actor").value);render()};
+$("target").onchange=()=>{targetId=Number($("target").value);render()};
+$("play").onclick=()=>{let c=g.hands[0].find(c=>c.id===g.selected);if(!c||!applyCard(0,c,hero(actorId),hero(targetId)))alert("Jogada inválida: verifique Energia, alvo e limite de ações.")};
+$("attack").onclick=()=>{if(!basic(0,hero(actorId),hero(targetId)))alert("Selecione um atacante aliado e um alvo inimigo.")};
+$("ace").onclick=()=>{if(!useAce(0,hero(actorId),hero(targetId)))alert("Ás indisponível: verifique Energia e limite de uso.")};
 $("end").onclick=endTurn;$("reset").onclick=()=>{if(confirm("Iniciar uma nova partida?"))start()};start();
 </script></body></html>
