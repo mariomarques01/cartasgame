@@ -701,13 +701,13 @@ func _build_ui() -> void:
 	safe.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	safe.add_theme_constant_override("margin_left", 8)
 	safe.add_theme_constant_override("margin_right", 8)
-	safe.add_theme_constant_override("margin_top", 10)
-	safe.add_theme_constant_override("margin_bottom", 10)
+	safe.add_theme_constant_override("margin_top", 5)
+	safe.add_theme_constant_override("margin_bottom", 5)
 	page.add_child(safe)
 	var layout := VBoxContainer.new()
-	layout.add_theme_constant_override("separation", 4)
+	layout.add_theme_constant_override("separation", 2)
 	safe.add_child(layout)
-	var heading := _make_label("♛  CARTAS  ♛\nREINOS DO DESTINO", 22)
+	var heading := _make_label("CARTAS\nREINOS DO DESTINO", 19)
 	heading.add_theme_color_override("font_color", Color("#f4ce80"))
 	heading.add_theme_color_override("font_outline_color", Color("#3d1d0b"))
 	heading.add_theme_constant_override("outline_size", 4)
@@ -725,7 +725,7 @@ func _build_ui() -> void:
 	top.add_child(ui["foe"]["root"])
 	var field := PanelContainer.new()
 	field.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	field.custom_minimum_size = Vector2(0, 460)
+	field.custom_minimum_size = Vector2(0, 365)
 	field.add_theme_stylebox_override("panel", _style(Color("#0a1721"), Color("#c9a062"), 5, 16))
 	field.clip_contents = true
 	layout.add_child(field)
@@ -750,9 +750,9 @@ func _build_ui() -> void:
 	field.add_child(margin)
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var rows := VBoxContainer.new()
-	rows.add_theme_constant_override("separation", 4)
+	rows.add_theme_constant_override("separation", 2)
 	margin.add_child(rows)
-	var enemy_label := _make_label("☠  REINO ADVERSÁRIO  ☠", 16)
+	var enemy_label := _make_label("☠  REINO ADVERSÁRIO  ☠", 13)
 	enemy_label.add_theme_color_override("font_color", GOLD)
 	rows.add_child(enemy_label)
 	ui["enemy"] = HBoxContainer.new()
@@ -765,7 +765,7 @@ func _build_ui() -> void:
 	ui["counts"].add_theme_color_override("font_color", CREAM)
 	rows.add_child(ui["counts"])
 	rows.add_child(HSeparator.new())
-	var player_label := _make_label("♛  SEUS HERÓIS  ♛", 16)
+	var player_label := _make_label("♛  SEUS HERÓIS  ♛", 13)
 	player_label.add_theme_color_override("font_color", GOLD)
 	rows.add_child(player_label)
 	ui["player"] = HBoxContainer.new()
@@ -773,7 +773,7 @@ func _build_ui() -> void:
 	ui["player"].size_flags_vertical = Control.SIZE_EXPAND_FILL
 	ui["player"].add_theme_constant_override("separation", 6)
 	rows.add_child(ui["player"])
-	var info_title := _make_label("⚔  HERÓI ATIVO  ⚔", 15)
+	var info_title := _make_label("⚔  HERÓI ATIVO  ⚔", 13)
 	info_title.add_theme_color_override("font_color", GOLD)
 	layout.add_child(info_title)
 	var info_panel := PanelContainer.new()
@@ -783,27 +783,27 @@ func _build_ui() -> void:
 	info_row.add_theme_constant_override("separation", 8)
 	info_panel.add_child(info_row)
 	var portrait := TextureRect.new()
-	portrait.custom_minimum_size = Vector2(86, 112)
+	portrait.custom_minimum_size = Vector2(62, 78)
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	info_row.add_child(portrait)
 	ui["portrait"] = portrait
-	ui["info"] = _make_label("", 12)
+	ui["info"] = _make_label("", 11)
 	ui["info"].horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	ui["info"].custom_minimum_size = Vector2(0, 58)
 	ui["info"].add_theme_color_override("font_color", CREAM)
 	ui["info"].size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	info_row.add_child(ui["info"])
-	var hand_title := _make_label("✦  SUA MÃO  ✦", 17)
+	var hand_title := _make_label("✦  SUA MÃO  ✦", 14)
 	hand_title.add_theme_color_override("font_color", GOLD)
 	layout.add_child(hand_title)
 	var scroll := ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(0, 178)
+	scroll.custom_minimum_size = Vector2(0, 137)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	layout.add_child(scroll)
 	ui["hand"] = HBoxContainer.new()
-	ui["hand"].custom_minimum_size = Vector2(0, 176)
+	ui["hand"].custom_minimum_size = Vector2(0, 135)
 	ui["hand"].add_theme_constant_override("separation", 4)
 	scroll.add_child(ui["hand"])
 	ui["actions"] = HBoxContainer.new()
@@ -815,7 +815,7 @@ func _build_ui() -> void:
 		button.set_meta("id", label)
 		if label == "Encerrar": ui["end_button"] = button
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		button.custom_minimum_size = Vector2(0, 58)
+		button.custom_minimum_size = Vector2(0, 50)
 		button.add_theme_font_size_override("font_size", 13)
 		var action_color := Color("#6d131a") if label == "Atacar" else Color("#123d74") if label == "Defender" else Color("#1a6149") if label == "Ás" else Color("#604019") if label == "Jogar" else Color("#872322")
 		button.add_theme_stylebox_override("normal", _style(action_color, Color("#dcb46c"), 3, 9))
@@ -961,14 +961,14 @@ func _make_hero_card(i: int) -> Button:
 		width = 6
 	var fallback := "%s\n%s\nVIDA %d/%d\nATQ %d  DEF %d\nESCUDO %d" % [_suit_name(h["suit"]),h["name"],h["hp"],h["max_hp"],h["atk"],h["def"],h["shield"]]
 	var card := _make_card(fallback, h["suit"] in ["♥","♦"], func(): _select_hero(i), border, width)
-	card.custom_minimum_size = Vector2(0, 195)
+	card.custom_minimum_size = Vector2(0, 155)
 	var key: String = str(h["suit"]) + str(h["rank"])
 	if card_art.has(key):
 		_attach_art(card, card_art[key])
 		var power_line: String = _short_ace(h["suit"])
 		var passive := _short_passive(h)
 		if passive != "": power_line += "  /  " + passive
-		_badge(card, ["VIDA %d/%d  |  ATQ %d" % [h["hp"],h["max_hp"],h["atk"]], "DEF %d  |  ESC %d" % [h["def"],h["shield"]]], float(h["hp"]) / float(h["max_hp"]), 51.0)
+		_badge(card, ["VIDA %d/%d  ATQ %d" % [h["hp"],h["max_hp"],h["atk"]], "DEF %d  ESC %d" % [h["def"],h["shield"]]], float(h["hp"]) / float(h["max_hp"]), 42.0)
 	card.set_drag_forwarding(_drag_hero.bind(i), _can_drop_on_hero.bind(i), _drop_on_hero.bind(i))
 	if h["hp"] <= 0:
 		card.modulate = Color(0.5, 0.38, 0.38)
@@ -1005,7 +1005,7 @@ func _rebuild_hand() -> void:
 		child.queue_free()
 	hand_views.clear()
 	var cw: float = clampf((size.x - 30.0) / 4.0 - 4.0, 92.0, 128.0)
-	var ch: float = cw * 1.48
+	var ch: float = 133.0
 	for i in hands[0].size():
 		var c: Dictionary = hands[0][i]
 		var selected: bool = i == selected_index
